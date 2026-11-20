@@ -18,6 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 
 import { adminToken, api } from "@/lib/api";
+import { CreditLedgerView } from "@/components/admin/CreditLedgerView";
 import { RoundCustomization } from "@/components/predictor/RoundCustomization";
 import { BottlePatternView } from "@/components/predictor/BottleRounds";
 import { MinesBoard } from "@/components/predictor/MinesBoard";
@@ -220,6 +221,7 @@ function AdminDashboard() {
               ["users", "Referred users"],
               ["commissions", "Commissions"],
               ["payouts", "Payouts"],
+              ["credits", "Credit ledger"],
               ["rounds", "Round customization"],
               ["bottle", "Bottle rounds"],
               ["mines", "Mines playtest"],
@@ -253,6 +255,9 @@ function AdminDashboard() {
         </TabsContent>
         <TabsContent value="payouts" className="mt-6">
           <DataTable rows={payouts.data ?? []} loading={payouts.isLoading} />
+        </TabsContent>
+        <TabsContent value="credits" className="mt-6">
+          <CreditLedgerView token={token} endpoint="/api/admin/credits" />
         </TabsContent>
         <TabsContent value="rounds" className="mt-6">
           <RoundCustomization />

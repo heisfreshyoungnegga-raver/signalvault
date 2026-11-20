@@ -24,7 +24,7 @@ export function NextRunPanel({
 }) {
   const st = PHASE_STYLE[phase];
   // countdown runs 5 -> 1, bar depletes as it ticks
-  const cdFrac = phase === "countdown" ? Math.max(0, Math.min(1, countdown / 5)) : 0;
+  const cdFrac = phase === "countdown" ? Math.max(0, Math.min(1, countdown / 4)) : 0;
 
   return (
     <div

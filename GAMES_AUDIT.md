@@ -90,8 +90,8 @@ Full backend route table (≈120 routes) is documented in `~/workspace/virtuwinU
 ## 5. SignalVault — current state
 
 **Games (live, server-anchored — SignalVault is AHEAD of VirtuWin here):**
-- **Crash/prediction engines** in `lib/services/engines/` (registry `GAMES`): `aviator`, `sporty-jet`, `sportyhero` (CrashEngine, provably-fair hash chain, per-game seed/serverSeed), `sportykick` (PenaltyEngine — zone predictions), `super-hero` (ActionEngine — zone predictions), `test-flight` (lab CrashEngine).
-- **Live play is client-side:** `useCrashRun` first draws `GET /api/rounds/next/:gameId` (admin custom rounds, FIFO) and falls back to a **local provably-fair draw** (`src/lib/provably-fair.ts`). Server engines API serves detail/history/tick/fairness/verify/analyze + Monte-Carlo `simulate` (`/api/engines/*`, incl. `/zones` for sportykick/super-hero).
+- **Crash/prediction engine** in `lib/services/engines/` (registry `GAMES`): `aviator` only (CrashEngine, provably-fair hash chain, seed 42 / serverSeed `darkweb-demo-aviator-v1`) — Aviator-only since the 2026-11-20 owner cut (Sporty Jet, SportyKick, SportyHero, Super Hero, Test Flight removed; `penalty-engine.js` / `action-engine.js` deleted).
+- **Live play is client-side:** `useCrashRun` first draws `GET /api/rounds/next/aviator` (admin custom rounds, FIFO) and falls back to a **local provably-fair draw** (`src/lib/provably-fair.ts`). Server engines API serves detail/history/tick/fairness/verify/analyze + Monte-Carlo `simulate` (`/api/engines/*`); any non-`aviator` game id 404s on engine/rounds endpoints, and frontend routes redirect to Aviator.
 - **Custom rounds (admin + superadmin "rounds" tab, `RoundCustomization.tsx`):** next-10 multipliers per game, 1.00–1000x, random-fill, clear-to-revert; `lib/services/customRounds.js` + `custom_rounds` table; `GET/POST/DELETE /api/admin/rounds/custom[/:gameId]`, public `GET /api/rounds/next/:gameId`.
 - **Scan:** complete (single + timed session), collapsed to Premium.
 - **Access model (already collapsed):** one-time gate GHS 50 (`gate.tsx`) + **single Premium pass GHS 550 / 24 h per game** (`skyPayments.js` GAME_PLANS); no Nigeria/WW rails; payments on SignalVault's ShinobiPay-based stack.
@@ -124,7 +124,7 @@ Full backend route table (≈120 routes) is documented in `~/workspace/virtuwinU
 3. **Bottle + kill switch:** source excludes bottle from the virtual-predictions gate. Decide deliberately (recommend: include it — one switch should stop all prediction surfaces).
 4. **Payments:** port games onto SignalVault's existing rails (gate + Premium pass via `skyPayments`). Do **not** import VirtuWin's Pycue services — SignalVault's backend deliberately carries the ShinobiPay lineage; mixing rails re-opens settled decisions.
 5. **Snapshot trust:** the Oct scan maps in `virtuwinUi-scan/` describe retired flows (ShinobiPay Ghana, manual Ghana) — anyone building from them without this audit would resurrect dead code. Root-level `games.html`/`scan.html` in the source repo are likewise stale copies; `public/` is canonical.
-6. **`test-flight`** (SignalVault lab engine) is unrelated to the port; leave it.
+6. **`test-flight`** (SignalVault lab engine) is unrelated to the port — and it was removed anyway in the 2026-11-20 Aviator-only cut; nothing to leave.
 7. **Game art:** VirtuWin's mines/bottle art is mostly icon/emoji-driven in-page (no dedicated card art files beyond `public/assets/mines-engine-card.png` and crest PNGs). Chuks's standing rule — keep original game images as-is — applies to any art carried over; new SignalVault card art for mines/bottle needs his eye before wiring.
 
 ## 8. Port checklist (concrete)

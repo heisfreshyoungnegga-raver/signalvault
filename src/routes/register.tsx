@@ -92,7 +92,7 @@ function RegisterPage() {
             {[
               ["Sign up", "Name, email, username and password."],
               ["Top up", "Credits from GH₵250, MoMo or bank transfer."],
-              ["Play", "Every engine and the AI slip scan, 5 credits a play."],
+              ["Play", "Every engine and the AI slip scan, 4 credits a play."],
             ].map(([step, text], i) => (
               <li key={step} className="flex items-start gap-3">
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white/15 font-mono text-sm font-bold ring-1 ring-white/30">

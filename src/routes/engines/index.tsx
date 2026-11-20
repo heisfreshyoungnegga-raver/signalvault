@@ -12,7 +12,7 @@ export const Route = createFileRoute("/engines/")({
       {
         name: "description",
         content:
-          "Five live AI prediction engines — Sporty Jet, Aviator, SportyKick, SportyHero and Super Hero. Real-time calls with confidence scores.",
+          "One live AI prediction engine — Aviator. Real-time calls with confidence scores.",
       },
       { property: "og:title", content: "Prediction Engines — SignalVault" },
     ],

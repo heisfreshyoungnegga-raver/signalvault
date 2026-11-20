@@ -56,7 +56,7 @@ The product code contains **no demo accounts, no seeded data, no mock data paths
 | `SUPERADMIN_USERNAME` + `SUPERADMIN_PASSWORD` | First super admin, created lazily on first request (`lib/bootstrap.js`) | No super admin can ever be created; admin side is dead |
 | `APP_FRONTEND_BASE_URL` | SSR loader base (`loaderApiBase`) + admin referral links (`frontendBaseUrl`) | SSR loaders fall back to `http://127.0.0.1:8080` / referral links to `http://localhost:3000` — hard page loads and referral links break |
 | `IMGBB_API_KEY` | Proof-screenshot uploads (`POST /api/upload` → ImgBB; the returned URL is stored on the submission) | Uploads 503 with a clear message — and since a screenshot is **mandatory** on manual submit, **all manual payments stop** |
-| At least one AI key: `AI_OPENROUTER_API_KEYS` (or `AI_OPENROUTER_API_KEY`), `AI_GEMINI_API_KEYS`, `AI_CLOUDFLARE_ACCOUNTS` | Slip-scan providers (`lib/services/ai.js`, CSV lists) | Scan analysis fails with an explicit "not configured" error (no fake results, no silent demo mode) |
+| At least one AI key: `AI_OPENROUTER_API_KEYS` (or `AI_OPENROUTER_API_KEY`) | Slip-scan provider (`lib/services/ai.js`, CSV list, openrouter/free only) | Scan analysis fails with an explicit "not configured" error (no fake results, no silent demo mode) |
 
 **Optional — sane defaults exist:**
 
@@ -69,7 +69,7 @@ The product code contains **no demo accounts, no seeded data, no mock data paths
 | `APP_PLATFORM_FRONTEND_URL` | Only the OpenRouter referer label |
 | `MOCK_API_URL` | **Do not set in production** — SSR override for local rigs only |
 
-**Dead vars (in the 21 Oct list / `.env.example`, no longer read by the code):** `BOOTSTRAP_KEY` (zero references in the tree — first SA is purely the env pair above), `AI_GEMINI_FALLBACK_MODELS`, `AI_ATTEMPT_TIMEOUT_SECONDS` (timeout is a hardcoded 6s constant), `APP_SHINOBIPAY_*` (gateway removed), `VITE_API_BASE_URL` (the frontend reads no build-time env at all). `.env.example` still lists the ShinobiPay pair — stale doc, worth a tidy.
+**Dead vars (in the 21 Oct list / `.env.example`, no longer read by the code):** `BOOTSTRAP_KEY` (zero references in the tree — first SA is purely the env pair above), `AI_ATTEMPT_TIMEOUT_SECONDS` (timeout is a hardcoded 6s constant), `APP_SHINOBIPAY_*` (gateway removed), `VITE_API_BASE_URL` (the frontend reads no build-time env at all). `.env.example` still lists the ShinobiPay pair — stale doc, worth a tidy.
 
 ### Wiring
 

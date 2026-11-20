@@ -294,7 +294,7 @@ export function BottleArena({ sandbox = false }: { sandbox?: boolean }) {
           {!sandbox && creditsLeft != null && (
             <span className="inline-flex items-center gap-1 rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-[11px] font-bold text-success">
               <MaterialIcon name="account_balance_wallet" className="text-[13px]" />
-              {creditsLeft} credits · 5 per spin
+              {creditsLeft} credits · 4 per spin
             </span>
           )}
           <span className="text-xs font-bold text-muted-foreground">Round #{round}</span>

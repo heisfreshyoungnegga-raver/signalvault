@@ -578,6 +578,14 @@ The task's `"unlocks"` pattern hits only `TGT pricing.tsx:244` (row #4 above). `
 - Source replaced it with self-hosted Neon-DB uploads (`SRC api/index.js:465-505`, `POST /api/upload` stores in an `uploads` table and returns `/api/uploads/<id>`; comment: ImgBB key "was never set — so every buyer hit 'Image upload is not configured'"). The task brief says the target's ImgBB path must stay, and the target's `MEMORY.md` entry says the full pay→play flow still awaits an IMGBB key. **Do not port the source upload code as part of the tier change** — it is a separate, larger migration (new table + route + all form callers). Note only that the tier port does not depend on which upload backend is used: both `pricing.tsx` and `manual-payment.tsx` just need `up.url`.
 
 ### Virtuals — shared credit wallet, must not break
+> **2026-11-20 (owner order) — SUPERSEDED:** the virtual-football
+> betting game described below was **removed** from SignalVault
+> (`api/virtuals.js`, `lib/services/virtuals.js`,
+> `src/routes/virtuals.tsx`, `src/lib/virtuals-api.ts` deleted;
+> `/api/virtuals/*` now 404s). "Instant Virtuals" is now only dark
+> web's AI slip-scan front door (lobby tile → `/scan`). The notes
+> below are history of the removed game, not live code — do not
+> re-add it from this map.
 - Virtuals spend/grant through the same wallet the tiers feed: `SRC/TGT lib/services/virtuals.js:18-19` ("Min stake 5 credits; stake spent via `credits.spendAmount` (ref `VIRTUAL_STAKE_<betId>`), wins paid via `credits.grantCredits`"), `:406` (win payout `grantCredits`), `:639` (`spendAmount(key, nStake, …)`), `:650` (refund `grantCredits(key, nStake, …)`), `:656` (`balanceFor`). `virtuals.js` is identical in both codebases.
 - **What the tier port changes for Virtuals:** nothing in code — but the *economics* change: a STARTER top-up (20 credits) now buys 4 minimum-stake bets instead of 6, and `credits.summary().packCredits` (read by the lobby/wallet label via `skyAccount.toAccountUser` → `credits.balanceForIdentities`) changes 30 → 40. Do not touch `spendAmount`, `COST_PER_USE`, or the Virtuals bet/settlement code.
 - The lobby lock fix is already mirrored in the target (`TGT lib/services/skyAccount.js:97-108`, comment: "Mirrors the original SignalVault fix of 2026-11-17") — no action.

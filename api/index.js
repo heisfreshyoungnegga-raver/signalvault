@@ -41,7 +41,6 @@ const bottleRounds = require('../lib/services/bottleRounds');
 
 const { requireAdmin, requireSuperAdmin } = require('../lib/middleware/adminAuth');
 const { requireSession } = require('../lib/middleware/sessionAuth');
-const virtualsRouter = require('./virtuals');
 
 const app = express();
 app.set('trust proxy', true);
@@ -240,7 +239,7 @@ app.post('/api/games/intro-seen', requireSession, h(async (req, res) => {
 
 // ── Credit enforcement (2026-11-06, replaces 45-minute windows) ──────────
 // In-engine ACTIONS (round ticks, predictor draws/analysis, the FIFO
-// bottle + custom-round draws) require at least 5 credits in the
+// bottle + custom-round draws) require at least 4 credits in the
 // caller's wallet. Identity comes from the Bearer session when one is
 // presented; no session (or no casino account behind it) means no
 // credits, which answers CREDITS_EXHAUSTED — the same answer an
@@ -286,7 +285,7 @@ async function assertGameAccess(req, game) {
 }
 
 /**
- * Spend 5 credits for one play (crash round / bottle spin). The spend
+ * Spend 4 credits for one play (crash round / bottle spin). The spend
  * lands BEFORE the draw so a failed spend never consumes an admin-set
  * custom round; if the draw itself then errors, the 5 are refunded.
  * Staff never spend. Returns the balance after the spend.
@@ -339,9 +338,9 @@ app.get('/api/protected/dashboard', requireSession, h(async (req, res) => {
 // ============================================================================
 app.get('/api/payment/plans', h(async (req, res) => {
   // Credit-pack catalogue — the manual-payment page's plan picker reads
-  // this route. Four tiers (2026-11-17): GH₵250 → 20, GH₵300 → 25,
-  // GH₵500 → 40, GH₵1,000 → 80 credits (NGN 47,000 / 56,000 / 94,000 /
-  // 188,000). The pricing page's per-game passes live at
+  // this route. NEW PACKS (2026-11-20): GH₵250 → 4, GH₵300 → 8,
+  // GH₵500 → 12, GH₵1,000 → 20 credits (NGN prices not set). The
+  // pricing page's per-game passes live at
   // /api/plans/catalogue below; the two catalogues are different products
   // and must not share a route.
   const list = Object.values(PLAN).map((p) => ({
@@ -553,8 +552,8 @@ app.post('/api/engines/:id/verify', h(async (req, res) => {
 }));
 
 // ----------------------------------------------------------------------------
-// /api/engines analytics extensions — target analysis, Monte-Carlo simulation,
-// 9-zone penalty stats, 5-zone action metrics, saved analysis records.
+// /api/engines analytics extensions — target analysis, Monte-Carlo simulation
+// (Aviator crash only), saved analysis records.
 // ----------------------------------------------------------------------------
 const { fairRound } = require('../lib/services/engines/provably-fair');
 
@@ -638,34 +637,6 @@ app.post('/api/engines/:id/simulate', h(async (req, res) => {
       disclaimer: 'Monte-Carlo over the engine\'s provably-fair chain. Every round is independent with a fixed 3% house edge — no target has positive EV; netPnl is expected to be negative.',
     },
     timestamp: new Date().toISOString(),
-  }));
-}));
-
-// 9-zone goal-mouth breakdown for the penalty engine (SportyKick).
-app.get('/api/engines/sportykick/zones', h(async (req, res) => {
-  const g = engines.getGame('sportykick');
-  if (!g) throw new ApiError('Unknown game engine', 404);
-  const window = Math.min(500, Math.max(1, parseInt(req.query.window, 10) || 120));
-  const zs = g.engine.zoneStats(window);
-  res.json(ok('Penalty zone stats', {
-    gameId: g.id,
-    window,
-    sampleSize: zs.sampleSize,
-    zones: zs.zones,
-  }));
-}));
-
-// Per-zone hot-rate metrics for the action engine (Super Hero).
-app.get('/api/engines/super-hero/zones', h(async (req, res) => {
-  const g = engines.getGame('super-hero');
-  if (!g) throw new ApiError('Unknown game engine', 404);
-  const window = Math.min(500, Math.max(1, parseInt(req.query.window, 10) || 120));
-  const zm = g.engine.zoneMetrics(window);
-  res.json(ok('Action zone metrics', {
-    gameId: g.id,
-    window,
-    sampleSize: zm.sampleSize,
-    zones: zm.zones,
   }));
 }));
 
@@ -783,7 +754,7 @@ app.put('/api/settings/payment-details', requireSuperAdmin, h(async (req, res) =
 // Ordered consumption: each draw takes the next pinned call from the ONE
 // shared server-side sequence (all players stay in sync), cycling 1→10→1.
 // With no pattern set, data.mode is "ai" and the client's own predictor
-// calls the round. One spin = one play = 5 credits, spent here (sim
+// calls the round. One spin = one play = 4 credits, spent here (sim
 // wallet for sim tokens; staff never spend).
 app.post('/api/bottle/next', h(async (req, res) => {
   const ctx = await assertGameAccess(req, 'bottle');
@@ -916,6 +887,32 @@ function manualPaymentSummary(p) {
     reviewedByAdmin: p.reviewedByAdmin,
   };
 }
+// ── /api/admin/credits + /api/superadmin/credits — credit ledger (NEW 2026-11-20)
+// Staff-only read view of the credit wallet: wallet count, total
+// credits in circulation, top balances, and the latest ledger rows
+// (grants and spends, with their idempotency refs) so an admin can
+// audit any balance. Read-only — no grant or spend happens here.
+async function creditLedgerOverview() {
+  await credits.ensureSchema();
+  const wallets = await rawSql`SELECT COUNT(*) AS n, COALESCE(SUM(balance), 0) AS total FROM credit_balances`;
+  const recent = await rawSql`SELECT identity, delta, reason, ref, balance_after, created_at FROM credit_ledger ORDER BY created_at DESC LIMIT 100`;
+  const top = await rawSql`SELECT identity, balance, updated_at FROM credit_balances ORDER BY balance DESC LIMIT 50`;
+  return {
+    wallets: Number(wallets[0] && wallets[0].n || 0),
+    totalCredits: Number(wallets[0] && wallets[0].total || 0),
+    costPerUse: credits.COST_PER_USE,
+    packs: credits.PACKS.map((pk) => ({ ...pk })),
+    topBalances: top,
+    recentLedger: recent,
+  };
+}
+app.get('/api/admin/credits', requireAdmin, h(async (req, res) => {
+  res.json(ok('Credit wallet overview', await creditLedgerOverview()));
+}));
+app.get('/api/superadmin/credits', requireSuperAdmin, h(async (req, res) => {
+  res.json(ok('Credit wallet overview', await creditLedgerOverview()));
+}));
+
 app.get('/api/admin/manual-payments', requireAdmin, h(async (req, res) => {
   const list = (await manualPayment.listAll()).map(manualPaymentSummary);
   res.json(ok(`All manual payment submissions (${list.length})`, list));
@@ -1087,19 +1084,22 @@ app.post('/api/admin/mines-purchases/:id/reject', requireAdmin, h(async (req, re
 // The predictor consumes these in order (both simulator + live users); when
 // the queue empties the game reverts to random provably-fair generation.
 app.get('/api/admin/rounds/custom/:gameId', requireAdmin, h(async (req, res) => {
+  if (req.params.gameId !== 'aviator') throw new ApiError('Unknown game engine', 404);
   res.json(ok('Custom rounds', await customRounds.listRounds(req.params.gameId)));
 }));
 app.post('/api/admin/rounds/custom', requireAdmin, h(async (req, res) => {
   const { gameId, points } = req.body || {};
   if (!gameId) throw new ApiError('gameId is required', 400);
+  if (gameId !== 'aviator') throw new ApiError('Unknown game engine', 404);
   const by = req.adminSession ? req.adminSession.username : 'admin';
   res.json(ok('Custom rounds saved', await customRounds.setRounds(gameId, points, by)));
 }));
 app.delete('/api/admin/rounds/custom/:gameId', requireAdmin, h(async (req, res) => {
+  if (req.params.gameId !== 'aviator') throw new ApiError('Unknown game engine', 404);
   res.json(ok('Custom rounds cleared', await customRounds.clearRounds(req.params.gameId)));
 }));
 // Public draw: predictor calls this before each round. One call = one
-// play = 5 credits, spent here (real wallet, or the sim wallet for sim
+// play = 4 credits, spent here (real wallet, or the sim wallet for sim
 // tokens; staff never spend). Returns the custom round, or
 // { custom: false, creditsLeft } when none is queued (caller falls back
 // to local generation). Simulator sessions NEVER draw from the real SA
@@ -1107,6 +1107,9 @@ app.delete('/api/admin/rounds/custom/:gameId', requireAdmin, h(async (req, res) 
 // rounds are queued, so sim play can neither drain SA rounds nor play
 // them. Real and staff tokens draw FIFO.
 app.get('/api/rounds/next/:gameId', h(async (req, res) => {
+  // Aviator-only (owner order 2026-11-20): any other gameId 404s here,
+  // before any credit is spent — it never plays another engine.
+  if (req.params.gameId !== 'aviator') throw new ApiError('Unknown game engine', 404);
   const ctx = await assertGameAccess(req, req.params.gameId);
   const ref = 'ROUND_' + req.params.gameId + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
   const creditsLeft = await spendForPlay(ctx, req.params.gameId, ref);
@@ -1140,21 +1143,36 @@ app.get('/api/credits/balance', requireSession, h(async (req, res) => {
   res.json(ok('Credit balance', credits.summary(balance)));
 }));
 
-// ── /api/mines/play — one mines game = 5 credits ───────────────────────────
+// ── /api/mines/play — one mines game = 4 credits ───────────────────────────
 // Mines runs fully client-side, so the board calls this when a game
 // starts (Run prediction). Same spend rules as a crash round: staff
 // never spend, sim sessions spend sim credits, a failed spend answers
 // 403 CREDITS_EXHAUSTED and the board must not start.
 app.post('/api/mines/play', requireSession, h(async (req, res) => {
   if (req.userSession.sim) {
-    const left = await credits.spendSimCredits(req.userSession.username, { reason: 'PLAY_MINES', ref: 'MINES_SIM_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8) });
-    return res.json(ok('Mines game started (SIMULATED)', { ...credits.summary(left), simulated: true }));
+    const simRef = 'MINES_SIM_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+    const left = await credits.spendSimCredits(req.userSession.username, { reason: 'PLAY_MINES', ref: simRef });
+    try {
+      return res.json(ok('Mines game started (SIMULATED)', { ...credits.summary(left), simulated: true }));
+    } catch (err) {
+      // Spend landed but the reply failed — refund so the player is not
+      // charged for a game that never started (same rule as crash
+      // rounds / bottle spins).
+      await credits.grantSimCredits(req.userSession.username, credits.COST_PER_USE, { reason: 'REFUND_MINES', ref: 'REFUND_' + simRef }).catch(() => {});
+      throw err;
+    }
   }
   const skyUser = await skyAccount.findByUsername(req.userSession.username).catch(() => null);
   const identities = [req.userSession.username, skyUser && skyUser.email].filter(Boolean);
   await gameWindows.requireActive(identities, 'mines');
-  const left = await credits.spendCreditsForIdentities(identities, { reason: 'PLAY_MINES', ref: 'MINES_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8) });
-  res.json(ok('Mines game started', credits.summary(left)));
+  const ref = 'MINES_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  const left = await credits.spendCreditsForIdentities(identities, { reason: 'PLAY_MINES', ref });
+  try {
+    res.json(ok('Mines game started', credits.summary(left)));
+  } catch (err) {
+    await credits.grantCredits(await credits.keyForIdentities(identities), credits.COST_PER_USE, { reason: 'REFUND_MINES', ref: 'REFUND_' + ref }).catch(() => {});
+    throw err;
+  }
 }));
 app.delete('/api/admin/mines-purchases/:id', requireSuperAdmin, h(async (req, res) => {
   res.json(ok('Mines payment deleted', await minesPurchase.remove(req.params.id)));
@@ -2036,9 +2054,6 @@ app.post('/api/scan/session/analyze', upload.single('image'), h(async (req, res)
 // (it names a commit, nothing more). When either side is 'dev' (local
 // builds, or a host that does not expose the SHA at runtime) the
 // watcher skips the check — never a reload loop, never a false reload.
-// ── /api/virtuals/** — Instant Virtuals (real virtual football) ──────────
-app.use('/api/virtuals', virtualsRouter);
-
 app.get('/api/version', (req, res) => {
   res.json(ok('SignalVault build', { build: process.env.VERCEL_GIT_COMMIT_SHA || 'dev' }));
 });

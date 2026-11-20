@@ -117,7 +117,7 @@ export type Plan = {
   /** Credits this tier buys (20 / 25 / 40 / 80). */
   credits?: number;
   /** Nigeria price in naira (47,000 / 56,000 / 94,000 / 188,000). */
-  priceNgn?: number;
+  priceNgn?: number | null;
 };
 export type ScanPlan = {
   code: string;
@@ -126,9 +126,9 @@ export type ScanPlan = {
   maxPicks: number | string;
 };
 export type LoginData = { token: string; expiresAt: string; secondsRemaining: number };
-/* Account model: signup -> credit wallet (four tiers: GH₵250 → 20,
-   GH₵300 → 25, GH₵500 → 40, GH₵1,000 → 80 credits; 5 per scan/play).
-   Games are 'active' while the balance is >= 5. */
+/* Account model: signup -> credit wallet (four tiers: GH₵250 → 4,
+   GH₵300 → 8, GH₵500 → 12, GH₵1,000 → 20 credits; 4 per scan/play).
+   Games are 'active' while the balance is >= 4. */
 export type GameWindowState = {
   state: "locked" | "active" | "expired";
   plan: string | null;
@@ -149,7 +149,7 @@ export type AccountUser = {
   games?: Record<string, GameWindowState>;
   // Credit wallet summary — the only gate for games + scans now.
   credits?: CreditSummary;
-  // True when the wallet holds at least 5 credits, or an active legacy
+  // True when the wallet holds at least 4 credits, or an active legacy
   // scan session exists (the scan funnel's own gate, by email).
   scanAccess?: boolean;
   // Sim-only: the simulator scan grant backing scanAccess (10 scans /
@@ -299,38 +299,39 @@ export const NG_BANKS = [
 
 export type UploadData = { url: string };
 
-/* FOUR CREDIT TIERS (2026-11-17): GH₵250 → 20, GH₵300 → 25,
-   GH₵500 → 40 (default), GH₵1,000 → 80 credits; NGN 47,000 / 56,000 /
-   94,000 / 188,000. Every scan or play costs 5 credits. Credits never
-   expire; top-ups stack. Single source of truth is credits.js PACKS —
-   keep this table in sync with it. */
+/* NEW CREDIT PACKS (2026-11-20): GH₵250 → 4, GH₵300 → 8,
+   GH₵500 → 12 (default), GH₵1,000 → 20 credits. NGN prices are NOT
+   SET (priceNgn is null on every tier) — Nigeria packs are disabled
+   until the owner sets NGN prices. Every scan or play costs 4
+   credits. Credits never expire; top-ups stack. Single source of
+   truth is credits.js PACKS — keep this table in sync with it. */
 export const CREDIT_PACKS = [
-  { code: "STARTER", credits: 20, priceGhs: 250, priceNgn: 47000 },
-  { code: "STANDARD", credits: 25, priceGhs: 300, priceNgn: 56000 },
-  { code: "PREMIUM", credits: 40, priceGhs: 500, priceNgn: 94000 },
-  { code: "VAULT", credits: 80, priceGhs: 1000, priceNgn: 188000 },
+  { code: "STARTER", credits: 4, priceGhs: 250, priceNgn: null },
+  { code: "STANDARD", credits: 8, priceGhs: 300, priceNgn: null },
+  { code: "PREMIUM", credits: 12, priceGhs: 500, priceNgn: null },
+  { code: "VAULT", credits: 20, priceGhs: 1000, priceNgn: null },
 ] as const;
 
 export const CREDIT_PACK = {
-  credits: 40,
+  credits: 12,
   priceGhs: 500,
-  priceNgn: 94000,
-  costPerUse: 5,
+  priceNgn: null,
+  costPerUse: 4,
 } as const;
 
-/** Credits a tier amount buys (GH₵250 → 20 … GH₵1,000 → 80). */
+/** Credits a tier amount buys (GH₵250 → 4 … GH₵1,000 → 20). */
 export function creditsForAmountGhs(amountCedis: number | null | undefined): number | null {
   const found = CREDIT_PACKS.find((p) => p.priceGhs === amountCedis);
   return found ? found.credits : null;
 }
 
-/** Credits a tier code buys (STARTER → 20 … VAULT → 80). */
+/** Credits a tier code buys (STARTER → 4 … VAULT → 20). */
 export function creditsForTierCode(code: string | null | undefined): number | null {
   const found = CREDIT_PACKS.find((p) => p.code === code);
   return found ? found.credits : null;
 }
 
-/** Nigeria price for a scan tier code (SCAN_250 → 47,000 …). */
+/** Nigeria price for a scan tier code — null until NGN prices are set. */
 export function nairaForScanCode(code: string | null | undefined): number | null {
   const found = CREDIT_PACKS.find((p) => `SCAN_${p.priceGhs}` === code);
   return found ? found.priceNgn : null;
@@ -341,15 +342,15 @@ export type CreditSummary = {
   costPerUse: number;
   packCredits: number;
   packPriceGhs: number;
-  packPriceNgn: number;
-  packs?: { code: string; credits: number; priceGhs: number; priceNgn: number }[];
+  packPriceNgn: number | null;
+  packs?: { code: string; credits: number; priceGhs: number; priceNgn: number | null }[];
 };
 
 export const PLAN_FALLBACK: Plan[] = [
-  { plan: "STARTER", hours: 0.75, minutes: 45, amountCedis: 250, credits: 20, priceNgn: 47000 },
-  { plan: "STANDARD", hours: 0.75, minutes: 45, amountCedis: 300, credits: 25, priceNgn: 56000 },
-  { plan: "PREMIUM", hours: 0.75, minutes: 45, amountCedis: 500, credits: 40, priceNgn: 94000 },
-  { plan: "VAULT", hours: 0.75, minutes: 45, amountCedis: 1000, credits: 80, priceNgn: 188000 },
+  { plan: "STARTER", hours: 0.75, minutes: 45, amountCedis: 250, credits: 4, priceNgn: null },
+  { plan: "STANDARD", hours: 0.75, minutes: 45, amountCedis: 300, credits: 8, priceNgn: null },
+  { plan: "PREMIUM", hours: 0.75, minutes: 45, amountCedis: 500, credits: 12, priceNgn: null },
+  { plan: "VAULT", hours: 0.75, minutes: 45, amountCedis: 1000, credits: 20, priceNgn: null },
 ];
 
 export const SCAN_PLAN_FALLBACK: ScanPlan[] = [
@@ -504,18 +505,14 @@ export async function listEngines(): Promise<EngineGame[]> {
 }
 
 // Static tile data so engine lobbies render INSTANTLY — the /api/engines
-// call can take 1–3s on a cold serverless start. These six rows mirror
-// lib/services/engines/index.js exactly (same ids, names, tags, images,
-// blurbs); live stats + predictions swap in when the API answers.
+// call can take 1–3s on a cold serverless start. This one row mirrors
+// lib/services/engines/index.js exactly (same id, name, tag, image,
+// blurb); live stats + predictions swap in when the API answers.
+// Aviator-only since 2026-11-20.
 // Placeholder stats read 0 / "Warming up…" — honest, never invented.
 // Used as placeholderData by /engines and /predictor.
 export const ENGINES_FALLBACK: EngineGame[] = [
-  { id: "sporty-jet", name: "Sporty Jet", tag: "Crash", provider: "SportyBet", image: "/games/sporty-jet.png", blurb: "Cash out before the jet flies away — AI reads the rounds for you.", stats: { engine: "Jet Engine", rounds: 0, predictions: 0, hits: 0, accuracy: 0, streak: 0, bestStreak: 0 }, prediction: { type: "crash", summary: "Warming up…", confidence: 0, riskLevel: "—", stakePct: 0, reasoning: [], round: 0, engine: "Jet Engine" } },
   { id: "aviator", name: "Aviator", tag: "Crash", provider: "Spribe", image: "/games/aviator.png", blurb: "The legendary red plane — AI times your cash-out to the round.", stats: { engine: "Aviator Engine", rounds: 0, predictions: 0, hits: 0, accuracy: 0, streak: 0, bestStreak: 0 }, prediction: { type: "crash", summary: "Warming up…", confidence: 0, riskLevel: "—", stakePct: 0, reasoning: [], round: 0, engine: "Aviator Engine" } },
-  { id: "sportykick", name: "SportyKick", tag: "Penalty", provider: "SportyBet", image: "/games/sportykick.png", blurb: "Penalty shootout predictions, round by round.", stats: { engine: "Kick Engine", rounds: 0, predictions: 0, hits: 0, accuracy: 0, streak: 0, bestStreak: 0 }, prediction: { type: "penalty", summary: "Warming up…", confidence: 0, riskLevel: "—", stakePct: 0, reasoning: [], round: 0, engine: "Kick Engine" } },
-  { id: "sportyhero", name: "SportyHero", tag: "Crash", provider: "SportyBet", image: "/games/sportyhero.png", blurb: "The hero takes off — cash out before he flies away. 32-bit provably-fair crash.", stats: { engine: "Hero Engine", rounds: 0, predictions: 0, hits: 0, accuracy: 0, streak: 0, bestStreak: 0 }, prediction: { type: "crash", summary: "Warming up…", confidence: 0, riskLevel: "—", stakePct: 0, reasoning: [], round: 0, engine: "Hero Engine" } },
-  { id: "super-hero", name: "Super Hero", tag: "Action", provider: "SportyBet", image: "/games/super-hero.png", blurb: "Super Hero rounds decoded into clear predictions.", stats: { engine: "Super Engine", rounds: 0, predictions: 0, hits: 0, accuracy: 0, streak: 0, bestStreak: 0 }, prediction: { type: "action", summary: "Warming up…", confidence: 0, riskLevel: "—", stakePct: 0, reasoning: [], round: 0, engine: "Super Engine" } },
-  { id: "test-flight", name: "Test Flight", tag: "Crash · Lab", provider: "SignalVault Lab", image: "/games/test-flight.png", blurb: "Sandbox crash lab — tune the RTP and stress-test the predictor.", stats: { engine: "Lab Engine", rounds: 0, predictions: 0, hits: 0, accuracy: 0, streak: 0, bestStreak: 0 }, prediction: { type: "crash", summary: "Warming up…", confidence: 0, riskLevel: "—", stakePct: 0, reasoning: [], round: 0, engine: "Lab Engine" } },
 ];
 
 export async function getEngine(id: string): Promise<EngineDetail> {
@@ -686,37 +683,6 @@ export async function saveAnalysis(
   });
   if (!data) throw new ApiError("Could not save analysis", 500);
   return data;
-}
-
-export type ZoneStat = {
-  zone: string;
-  shots: number;
-  goals: number;
-  goalRate: number;
-  wilson: { lower: number; upper: number };
-};
-
-export type ActionZoneMetric = {
-  zone: string;
-  rounds: number;
-  hotCount: number;
-  hotRate: number;
-  wilson: { lower: number; upper: number };
-  smoothedRate: number;
-};
-
-export async function getPenaltyZones(window = 120): Promise<ZoneStat[]> {
-  const data = await api<{ gameId: string; window: number; zones: ZoneStat[] }>(
-    `/api/engines/sportykick/zones?window=${window}`,
-  );
-  return data?.zones ?? [];
-}
-
-export async function getActionZones(window = 120): Promise<ActionZoneMetric[]> {
-  const data = await api<{ gameId: string; window: number; zones: ActionZoneMetric[] }>(
-    `/api/engines/super-hero/zones?window=${window}`,
-  );
-  return data?.zones ?? [];
 }
 
 /* Server-side loader helper: loaders call the API project DIRECTLY.

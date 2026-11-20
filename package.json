@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "dev:api": "node local-server.js"
+    "dev:api": "node local-server.js",
+    "test": "bun test lib/services/"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

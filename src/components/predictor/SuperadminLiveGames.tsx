@@ -2,11 +2,8 @@ import { useCrashRun } from "@/components/predictor/crash/useCrashRun";
 import { NextRunPanel, RunHistory } from "@/components/predictor/crash/panels";
 import { GAME_PAGE_THEMES } from "@/components/predictor/crash/gameThemes";
 
-const GAMES = [
-  { id: "aviator", name: "Aviator" },
-  { id: "sporty-jet", name: "Sporty Jet" },
-  { id: "sportyhero", name: "SportyHero" },
-];
+// Aviator is the only crash engine (owner order 2026-11-20).
+const GAMES = [{ id: "aviator", name: "Aviator" }];
 
 function LiveGameCard({ gameId, name }: { gameId: string; name: string }) {
   // Staff preview: send the staff token first (see useCrashRun) so a

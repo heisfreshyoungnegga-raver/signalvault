@@ -571,13 +571,14 @@ CREATE TABLE IF NOT EXISTS game_windows (
 );
 CREATE INDEX IF NOT EXISTS idx_game_windows_identity ON game_windows(identity);
 
--- ── Credit wallet (2026-11-06, replaces 45-minute windows + scan grants) ──
--- One pack = 30 credits for GH₵400 / NGN 75,000; every use (scan, crash
--- round, bottle spin, mines game) costs 5. Credits never expire and
--- top-ups stack. Identity is the lower-cased account email (real) or the
--- sim identity (sim). The ledger audits every grant/spend; `ref` is
--- unique so an approval can never double-credit. Legacy game_windows /
--- scan grant rows are kept for history but grant NOTHING after this.
+-- ── Credit wallet (2026-11-20, replaces 45-minute windows + scan grants) ──
+-- NEW PACKS: GH₵250 → 4 credits, GH₵300 → 8, GH₵500 → 12, GH₵1,000 → 20;
+-- every use (scan, crash round, bottle spin, mines game) costs 4. NGN
+-- pack prices are NOT SET. Credits never expire and top-ups stack.
+-- Identity is the lower-cased account email (real) or the sim identity
+-- (sim). The ledger audits every grant/spend; `ref` is unique so an
+-- approval can never double-credit. Legacy game_windows / scan grant
+-- rows are kept for history but grant NOTHING after this.
 CREATE TABLE IF NOT EXISTS credit_balances (
     identity    TEXT PRIMARY KEY,
     balance     INTEGER NOT NULL DEFAULT 0,

@@ -51,7 +51,7 @@ function ScanResultPage() {
               Every pick below came from the AI&apos;s read of the slip you just uploaded —
               nothing here is pre-written, and a different slip gives a different result.
               {result.credits != null && (
-                <> This scan cost 5 credits — you have {result.credits.balance} left.</>
+                <> This scan cost 4 credits — you have {result.credits.balance} left.</>
               )}
             </p>
             <div className="mt-6">

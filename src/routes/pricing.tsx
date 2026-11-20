@@ -44,12 +44,12 @@ export const Route = createFileRoute("/pricing")({
       {
         name: "description",
         content:
-          "Four tiers from GH₵250 for 20 credits to GH₵1,000 for 80. Every scan or play costs 5 credits — every engine, credits never expire. Pay by Mobile Money or bank transfer.",
+          "Four tiers from GH₵250 for 4 credits to GH₵1,000 for 20 credits. Every scan or play costs 4 credits — every engine, credits never expire. Pay by Mobile Money or bank transfer.",
       },
       { property: "og:title", content: "Top up credits — SignalVault" },
       {
         property: "og:description",
-        content: "Four tiers from GH₵250 for 20 credits to GH₵1,000 for 80. Each scan or play costs 5 credits. Credits never expire.",
+        content: "Four tiers from GH₵250 for 4 credits to GH₵1,000 for 20 credits. Each scan or play costs 4 credits. Credits never expire.",
       },
     ],
   }),
@@ -58,8 +58,6 @@ export const Route = createFileRoute("/pricing")({
 
 const GAME_NAMES: Record<string, string> = {
   aviator: "Aviator",
-  "sporty-jet": "Sporty Jet",
-  sportyhero: "SportyHero",
   mines: "Mines",
   bottle: "Spin da Bottle",
 };
@@ -177,7 +175,7 @@ function PricingPage() {
       void qc.invalidateQueries({ queryKey: ["entitlement"] });
       void qc.invalidateQueries({ queryKey: ["me"] });
       toast.success(
-        `${creditsForAmountGhs(status?.amount) ?? 30} credits added — entering ${GAME_NAMES[status.game] ?? status.game}!`,
+        `${creditsForAmountGhs(status?.amount) ?? 12} credits added — entering ${GAME_NAMES[status.game] ?? status.game}!`,
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -247,8 +245,8 @@ function PricingPage() {
           </h1>
           <p className="text-muted-foreground mx-auto mt-4 max-w-xl text-base leading-relaxed">
             {gameName
-              ? `${selectedPlanObj?.credits ?? creditsForAmountGhs(selectedPlanObj?.amountCedis) ?? 30} credits unlocks ${gameName} — and every other game plus AI slip scans. Transfer the amount, submit your proof, and we'll credit your wallet.`
-              : "Four tiers, no subscriptions, no auto-renew: GH₵250 for 20 credits up to GH₵1,000 for 80. Every scan or play costs 5 credits."}
+              ? `${selectedPlanObj?.credits ?? creditsForAmountGhs(selectedPlanObj?.amountCedis) ?? 12} credits unlocks ${gameName} — and every other game plus AI slip scans. Transfer the amount, submit your proof, and we'll credit your wallet.`
+              : "Four tiers, no subscriptions, no auto-renew: GH₵250 for 4 credits up to GH₵1,000 for 20 credits. Every scan or play costs 4 credits."}
           </p>
         </div>
       </section>
@@ -257,7 +255,7 @@ function PricingPage() {
         {done ? (
           <PaymentSuccess
             title="Payment confirmed"
-            subtitle={`${creditsForAmountGhs(status?.amount) ?? 30} credits added to your wallet — each scan or play costs 5. ${status?.game ? `Jump back into ${GAME_NAMES[status.game] ?? status.game}.` : "Jump back into the casino."}`}
+            subtitle={`${creditsForAmountGhs(status?.amount) ?? 12} credits added to your wallet — each scan or play costs 4. ${status?.game ? `Jump back into ${GAME_NAMES[status.game] ?? status.game}.` : "Jump back into the casino."}`}
             onDone={enterGame}
           />
         ) : (
@@ -266,7 +264,7 @@ function PricingPage() {
               {/* Four tiers — tap a card to pick it. GH₵1,000 (Vault) is best value. */}
               <div className="mb-6 grid grid-cols-2 gap-3">
                 {plans.map((p) => {
-                  const credits = p.credits ?? creditsForAmountGhs(p.amountCedis) ?? 30;
+                  const credits = p.credits ?? creditsForAmountGhs(p.amountCedis) ?? 12;
                   const best = p.plan === "VAULT";
                   const active = selectedPlan === p.plan;
                   return (
@@ -291,7 +289,7 @@ function PricingPage() {
                         GHS {p.amountCedis}
                       </p>
                       <p className="text-muted-foreground text-xs">
-                        NGN {(p.priceNgn ?? 0).toLocaleString()} · {Math.floor(credits / 5)} uses
+                        {p.priceNgn != null ? `NGN ${p.priceNgn.toLocaleString()}` : "NGN to be set"} · {Math.floor(credits / 4)} uses
                       </p>
                     </button>
                   );
@@ -322,23 +320,26 @@ function PricingPage() {
                   <div className="p-5 sm:p-6">
                     <p className="text-xs font-bold text-muted-foreground">Amount to pay</p>
                     <p className="mt-2 font-display text-5xl font-black tracking-tight text-foreground">
-                      {country === "nigeria"
-                        ? `NGN ${(selectedPlanObj.priceNgn ?? 0).toLocaleString()}`
-                        : `GHS ${selectedPlanObj.amountCedis}`}
+                      {country === "nigeria" ? "NGN — to be set" : `GHS ${selectedPlanObj.amountCedis}`}
                     </p>
                     {country === "ghana" && (
                       <p className="text-muted-foreground mt-1 font-mono text-sm tabular-nums">{usdApprox(selectedPlanObj.amountCedis)}</p>
                     )}
                     <p className="mt-2 text-sm text-muted-foreground">
                       <span className="font-mono font-semibold text-primary tabular-nums">
-                        {selectedPlanObj.credits ?? creditsForAmountGhs(selectedPlanObj.amountCedis) ?? 30} credits
+                        {selectedPlanObj.credits ?? creditsForAmountGhs(selectedPlanObj.amountCedis) ?? 12} credits
                       </span>
-                      {` — 5 credits per scan or play · ${Math.floor((selectedPlanObj.credits ?? creditsForAmountGhs(selectedPlanObj.amountCedis) ?? 30) / 5)} uses per pack · never expires`}
+                      {` — 4 credits per scan or play · ${Math.floor((selectedPlanObj.credits ?? creditsForAmountGhs(selectedPlanObj.amountCedis) ?? 12) / 4)} uses per pack · never expires`}
                     </p>
                   </div>
                 </div>
               )}
 
+{country === "nigeria" && (
+  <p className="mb-6 rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm font-medium text-amber-700 dark:text-amber-300">
+    Nigeria packs are not priced yet — NGN prices are still to be set. Ghana (MoMo) packs are available now.
+  </p>
+)}
               <ol className="mb-6 space-y-0">
                 {[
                   ["Send", "Transfer the amount to the details below."],
@@ -360,7 +361,7 @@ function PricingPage() {
                 ))}
               </ol>
 
-              {details && <SendPaymentToCard country={country} details={details} />}
+              {details && country === "ghana" && <SendPaymentToCard country={country} details={details} />}
 
               {!token && (
                 <div className="card-surface mt-6 flex flex-col gap-3 p-5 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
@@ -478,7 +479,7 @@ function PricingPage() {
                 )}
                 <button
                   onClick={() => subscribe(selectedPlan)}
-                  disabled={busy !== null}
+                  disabled={busy !== null || country === "nigeria"}
                   className="bg-primary flex h-13 w-full items-center justify-center gap-2 rounded-2xl text-base font-black text-white transition active:scale-[0.98] disabled:opacity-60"
                 >
                   {busy === selectedPlan ? (
@@ -490,7 +491,7 @@ function PricingPage() {
                     <MaterialIcon name="receipt_long" className="text-[22px]" />
                   )}
                   {token
-                    ? `Submit proof for ${selectedPlanObj?.credits ?? creditsForAmountGhs(selectedPlanObj?.amountCedis) ?? 30} credits`
+                    ? `Submit proof for ${selectedPlanObj?.credits ?? creditsForAmountGhs(selectedPlanObj?.amountCedis) ?? 12} credits`
                     : "Log in to submit proof"}
                 </button>
                 <p className="text-center text-[11px] font-medium text-muted-foreground">
@@ -503,7 +504,7 @@ function PricingPage() {
               <div className="card-surface animate-rise mx-auto mt-6 max-w-xl p-6 text-center">
                 <div className="bg-warning/15 text-warning-foreground flex items-center justify-center gap-3 rounded-xl p-4 text-sm">
                   <MaterialIcon name="progress_activity" className="text-[20px] animate-spin" />
-                  Proof submitted — an admin is reviewing it. Your {selectedPlanObj?.credits ?? creditsForAmountGhs(selectedPlanObj?.amountCedis) ?? 30} credits land on approval.
+                  Proof submitted — an admin is reviewing it. Your {selectedPlanObj?.credits ?? creditsForAmountGhs(selectedPlanObj?.amountCedis) ?? 12} credits land on approval.
                 </div>
                 <p className="text-muted-foreground mt-3 font-mono text-xs break-all">
                   {paymentId}
@@ -546,11 +547,11 @@ function PricingPage() {
           {[
             [
               "Four tiers. Full stop.",
-              "GH₵250 for 20 credits up to GH₵1,000 for 80 (NGN 47,000–188,000 in Nigeria) — every game, every scan, best value on Vault.",
+              "GH₵250 for 4 credits up to GH₵1,000 for 20 credits (NGN prices to be set in Nigeria) — every game, every scan, best value on Vault.",
             ],
             [
-              "5 credits a play",
-              "Each crash round, bottle spin, mines game or AI slip scan costs 5 credits. Failed scans cost nothing.",
+              "4 credits a play",
+              "Each crash round, bottle spin, mines game or AI slip scan costs 4 credits. Failed scans cost nothing.",
             ],
             [
               "Never expires",

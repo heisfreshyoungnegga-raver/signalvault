@@ -23,7 +23,7 @@ export const Route = createFileRoute("/scan-slip")({
       { property: "og:title", content: "Scan your slip — SignalVault" },
       {
         property: "og:description",
-        content: "Credit packs from GH₵250. Each AI slip scan costs 5 credits — credits never expire.",
+        content: "Credit packs from GH₵250. Each AI slip scan costs 4 credits — credits never expire.",
       },
     ],
   }),
@@ -153,8 +153,8 @@ function AnalyzeSlip({
   // CREDIT WALLET (2026-11-06): the panel reads the wallet, not the
   // legacy grant window. No countdown any more — credits never expire.
   const creditsBalance = grant?.credits?.balance ?? null;
-  const scansAffordable = creditsBalance == null ? null : Math.floor(creditsBalance / 5);
-  const outOfCredits = creditsBalance != null && creditsBalance < 5;
+  const scansAffordable = creditsBalance == null ? null : Math.floor(creditsBalance / 4);
+  const outOfCredits = creditsBalance != null && creditsBalance < 4;
 
   const locked =
     grant != null &&
@@ -287,7 +287,7 @@ function AnalyzeSlip({
           <div className="mt-4 rounded-xl bg-primary/10 px-4 py-3 text-sm leading-relaxed">
             <span className="font-bold">{creditsBalance} credits</span>
             <span className="text-muted-foreground">
-              {" "}· each scan costs 5 credits
+              {" "}· each scan costs 4 credits
               {scansAffordable != null && scansAffordable > 0 && (
                 <> · {scansAffordable} {scansAffordable === 1 ? "scan" : "scans"} left</>
               )}
@@ -298,7 +298,7 @@ function AnalyzeSlip({
         {grant && locked && (
           <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm leading-relaxed">
             {outOfCredits && (
-              <>You&apos;re out of credits — each scan costs 5.</>
+              <>You&apos;re out of credits — each scan costs 4.</>
             )}
             {!outOfCredits && grant.state === "used-up" && (
               <>You&apos;ve used all the scans on this purchase.</>
@@ -395,7 +395,7 @@ function AnalyzeSlip({
           </button>
         )}
         <p className="text-muted-foreground mt-3 text-xs leading-relaxed">
-          Credit packs from GH₵250. Each completed scan costs 5 credits — failed or
+          Credit packs from GH₵250. Each completed scan costs 4 credits — failed or
           cancelled scans cost nothing.
         </p>
       </form>

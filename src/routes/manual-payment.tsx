@@ -102,8 +102,8 @@ function ManualPaymentPage() {
             Pay your way
           </h1>
           <p className="text-muted-foreground mx-auto mt-4 max-w-xl text-base">
-            Four tiers, from GH₵250 for 20 credits to GH₵1,000 for 80 — pick your pack below.
-            Each scan or play costs 5 credits, and credits never expire. Ghana pays by Mobile
+            Four tiers, from GH₵250 for 4 credits to GH₵1,000 for 20 credits — pick your pack below.
+            Each scan or play costs 4 credits, and credits never expire. Ghana pays by Mobile
             Money transfer, Nigeria by bank transfer. Both are reviewed manually — send the
             amount, submit your proof, and we confirm it.
           </p>
@@ -148,12 +148,10 @@ function ManualPaymentPage() {
             <p className="text-muted-foreground text-sm">
               Amount to pay:{" "}
               <span className="text-foreground text-base font-extrabold">
-                {country === "nigeria"
-                  ? `NGN ${(selectedPlan.priceNgn ?? 0).toLocaleString()}`
-                  : `GHS ${selectedPlan.amountCedis}`}
+                {country === "nigeria" ? "NGN — to be set" : `GHS ${selectedPlan.amountCedis}`}
               </span>{" "}
               <span className="text-xs">
-                · {selectedPlan.credits ?? "?"} credits, 5 per scan or play
+                · {selectedPlan.credits ?? "?"} credits, 4 per scan or play
                 {selectedPlan.plan === "VAULT" ? " · Best value" : ""}
               </span>
             </p>
@@ -289,7 +287,12 @@ function ManualSubscriptionForm({
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_1.3fr]">
       <div className="min-w-0 space-y-5">
-        {details && <SendPaymentToCard country={country} details={details} />}
+{country === "nigeria" && (
+  <p className="mb-6 rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm font-medium text-amber-700 dark:text-amber-300">
+    Nigeria packs are not priced yet — NGN prices are still to be set. Ghana (MoMo) packs are available now.
+  </p>
+)}
+        {details && country === "ghana" && <SendPaymentToCard country={country} details={details} />}
 
         <div className="card-surface p-6">
           <h2 className="text-lg font-bold">How it works</h2>
@@ -467,7 +470,7 @@ function ManualSubscriptionForm({
         <Button
           type="submit"
           size="lg"
-          disabled={submitting}
+          disabled={submitting || country === "nigeria"}
           className="mt-7 h-12 w-full rounded-xl text-base"
         >
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}

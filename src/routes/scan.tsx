@@ -55,7 +55,7 @@ export const Route = createFileRoute("/scan")({
       { property: "og:title", content: "AI betting-slip scan — SignalVault" },
       {
         property: "og:description",
-        content: "Four tiers from GH₵250 for 20 credits to GH₵1,000 for 80. Each AI slip scan costs 5 credits — credits never expire.",
+        content: "Four tiers from GH₵250 for 4 credits to GH₵1,000 for 20 credits. Each AI slip scan costs 4 credits — credits never expire.",
       },
     ],
   }),
@@ -138,7 +138,7 @@ function ScanPage() {
           </p>
           <img
             src="/games/instant-virtuals.png"
-            alt="Slip Scan"
+            alt="Instant Virtuals"
             className="mx-auto mt-8 aspect-[2/1] w-full max-w-xl rounded-2xl border border-border object-cover shadow-soft"
           />
         </div>
@@ -170,7 +170,7 @@ function ScanPage() {
                 </p>
                 <ul className="text-muted-foreground mt-5 flex-1 space-y-2.5 text-sm">
                   <li className="flex gap-2.5">
-                    <CheckCircle2 className="text-success mt-0.5 size-4 shrink-0" /> {creditsForAmountGhs(p.amountCedis) ?? 30} credits — {Math.floor((creditsForAmountGhs(p.amountCedis) ?? 30) / 5)} scans per pack, 5 credits each
+                    <CheckCircle2 className="text-success mt-0.5 size-4 shrink-0" /> {creditsForAmountGhs(p.amountCedis) ?? 12} credits — {Math.floor((creditsForAmountGhs(p.amountCedis) ?? 12) / 4)} scans per pack, 4 credits each
                   </li>
                   <li className="flex gap-2.5">
                     <CheckCircle2 className="text-success mt-0.5 size-4 shrink-0" /> Confidence +
@@ -366,9 +366,11 @@ function BuyScan({
               >
                 {plans.map((p) => (
                   <option key={p.code} value={p.code}>
-                    {creditsForAmountGhs(p.amountCedis) ?? 30} credits —{" "}
+                    {creditsForAmountGhs(p.amountCedis) ?? 12} credits —{" "}
                     {country === "nigeria"
-                      ? `NGN ${(nairaForScanCode(p.code) ?? 0).toLocaleString()}`
+                      ? nairaForScanCode(p.code) != null
+                        ? `NGN ${nairaForScanCode(p.code)!.toLocaleString()}`
+                        : "NGN to be set"
                       : `GHS ${p.amountCedis}`}
                     {p.code === "SCAN_1000" ? " · Best value" : ""}
                   </option>
@@ -397,26 +399,30 @@ function BuyScan({
               <div className="kente-strip -mx-6 -mt-6 mb-5 h-[6px] w-[calc(100%+3rem)] sm:-mx-8 sm:-mt-8 sm:w-[calc(100%+4rem)]" aria-hidden />
               <p className="text-xs font-bold text-muted-foreground">Amount to pay</p>
               <p className="mt-3 font-display text-5xl font-black tracking-tight">
-                {country === "nigeria"
-                  ? `NGN ${(selectedPlan ? nairaForScanCode(selectedPlan.code) ?? 0 : 0).toLocaleString()}`
-                  : `GHS ${selectedPlan?.amountCedis}`}
+                {country === "nigeria" ? "NGN — to be set" : `GHS ${selectedPlan?.amountCedis}`}
               </p>
               {country === "ghana" && selectedPlan && (
                 <p className="text-muted-foreground mt-1 text-sm">{usdApprox(selectedPlan.amountCedis)}</p>
               )}
               {selectedPlan && (
                 <p className="text-muted-foreground mt-2 text-sm">
-                  {creditsForAmountGhs(selectedPlan.amountCedis) ?? 30} credits — each completed scan costs 5 · credits never expire · {scanPlanTagline(selectedPlan)}
+                  {creditsForAmountGhs(selectedPlan.amountCedis) ?? 12} credits — each completed scan costs 4 · credits never expire · {scanPlanTagline(selectedPlan)}
                 </p>
               )}
             </div>
 
-            {details && <SendPaymentToCard country={country} details={details} />}
+{country === "nigeria" && (
+  <p className="mb-6 rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm font-medium text-amber-700 dark:text-amber-300">
+    Nigeria packs are not priced yet — NGN prices are still to be set. Ghana (MoMo) packs are available now.
+  </p>
+)}
+            {details && country === "ghana" && <SendPaymentToCard country={country} details={details} />}
 
             <Button
               type="button"
               size="lg"
               onClick={() => setStep(2)}
+              disabled={country === "nigeria"}
               className="h-12 w-full rounded-xl"
             >
               Paid
@@ -538,7 +544,7 @@ function BuyScan({
               />
             </div>
             <div className="sm:col-span-2">
-              <Button type="submit" size="lg" disabled={busy} className="h-12 w-full rounded-xl">
+              <Button type="submit" size="lg" disabled={busy || country === "nigeria"} className="h-12 w-full rounded-xl">
                 {busy ? <Loader2 className="size-4 animate-spin" /> : null}
                 Submit scan payment
               </Button>

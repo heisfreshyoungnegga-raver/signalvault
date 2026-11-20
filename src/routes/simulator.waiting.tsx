@@ -15,11 +15,6 @@ export const Route = createFileRoute("/simulator/waiting")({
 // names exactly what was bought.
 const GAMES: Record<string, string> = {
   aviator: "Aviator",
-  "sporty-jet": "Sporty Jet",
-  sportyhero: "SportyHero",
-  sportykick: "SportyKick",
-  "super-hero": "Super Hero",
-  "test-flight": "Test Flight",
   mines: "Mines",
   bottle: "Spin da Bottle",
   scan: "Instant Virtuals",
@@ -32,7 +27,7 @@ const NOTICE_KEY = "darkweb_sim_notice";
  * Every sim submit lands here instead of sitting on the form: the
  * payment confirms on its own after 3 seconds (the sim's standing
  * auto-approve), then the page takes the user onward directly — a game
- * pass back to the lobby with 30 credits added, a scan purchase
+ * pass back to the lobby with 12 credits added, a scan purchase
  * straight to the slip scanner. Cancel during the wait declines the
  * payment and returns to where the user came from. No simulator wording
  * anywhere on the page: it reads exactly like the real waiting page.
@@ -73,7 +68,7 @@ function SimWaitingPage() {
     }
     window.sessionStorage.setItem(
       NOTICE_KEY,
-      `Payment approved — 30 credits added to your wallet.`,
+      `Payment approved — 12 credits added to your wallet.`,
     );
     navigate({ to: "/simulator" });
   };
@@ -191,8 +186,8 @@ function SimWaitingPage() {
             <h1 className="mt-5 text-3xl font-black tracking-tight">Payment approved!</h1>
             <p className="text-muted-foreground mt-2 text-sm">
               {isScan
-                ? "30 credits added — your slip scanner is ready."
-                : `30 credits added — ${gameName} is ready to play.`}
+                ? "12 credits added — your slip scanner is ready."
+                : `12 credits added — ${gameName} is ready to play.`}
             </p>
             <p className="mt-4 inline-flex items-center gap-2 text-xs font-bold tracking-widest text-muted-foreground uppercase">
               <span className="size-1.5 animate-pulse rounded-full bg-success" />
@@ -226,7 +221,7 @@ function SimWaitingPage() {
               </p>
               <p className="mt-1 font-mono text-sm font-bold break-all">{paymentId}</p>
               <p className="mt-3 text-sm">
-                {isScan ? "AI slip scan" : "30 credits"} · {gameName}
+                {isScan ? "AI slip scan" : "12 credits"} · {gameName}
               </p>
             </div>
             <button

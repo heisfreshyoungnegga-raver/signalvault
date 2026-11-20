@@ -9,11 +9,7 @@ export const Route = createFileRoute("/predictor/history")({
 });
 
 const NAMES: Record<string, string> = {
-  "sporty-jet": "Sporty Jet",
   aviator: "Aviator",
-  sportykick: "SportyKick",
-  sportyhero: "SportyHero",
-  "super-hero": "Super Hero",
 };
 
 function PredictionHistory() {

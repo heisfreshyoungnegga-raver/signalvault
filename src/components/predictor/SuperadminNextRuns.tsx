@@ -4,11 +4,8 @@ import { drawCrashLocal } from "@/lib/provably-fair";
 import { GAME_PAGE_THEMES } from "@/components/predictor/crash/gameThemes";
 import { cn } from "@/lib/utils";
 
-const GAMES = [
-  { id: "aviator", name: "Aviator" },
-  { id: "sporty-jet", name: "Sporty Jet" },
-  { id: "sportyhero", name: "SportyHero" },
-];
+// Aviator is the only crash engine (owner order 2026-11-20).
+const GAMES = [{ id: "aviator", name: "Aviator" }];
 
 function crashTone(crash: number) {
   if (crash < 2)

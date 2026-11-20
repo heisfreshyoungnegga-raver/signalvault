@@ -58,7 +58,7 @@ Stack (from `package.json`, `vercel.json`, `vite.config.ts`): TanStack Start
 ### Root layout — `src/routes/__root.tsx` (283 lines)
 - The only layout. `RootShell` renders `<html lang="en"><head><HeadContent/></head><body>{children}<Scripts/></body></html>`.
 - `RootComponent`: wraps everything in `QueryClientProvider`; non-immersive
-  pages get `<div class="flex min-h-screen flex-col"><Header/><main><Outlet/></main><Footer/></div>`; **immersive pages get no Header/Footer**: `/predictor/aviator`, `/predictor/sporty-jet`, `/predictor/sportyhero` (checked in both `__root.tsx` and `src/routes/predictor/route.tsx`, `VIDEO_GAMES`).
+  pages get `<div class="flex min-h-screen flex-col"><Header/><main><Outlet/></main><Footer/></div>`; **immersive pages get no Header/Footer**: `/predictor/aviator` only (Aviator-only cut 2026-11-20; checked in both `__root.tsx` and `src/routes/predictor/route.tsx`, `VIDEO_GAMES`).
 - Global extras mounted here: `<Toaster position="top-center" richColors />`
   (Sonner), `<SupportFloat />` (on every page incl. immersive), and
   `<DeployVersionWatcher />` — polls the live document + `GET /api/version`
@@ -173,13 +173,13 @@ end in "— Dark Web" (full list in §4).
 | `/pricing` | `src/routes/pricing.tsx` | **Top-up / buy page.** Single Premium pack (GH₵400, 45-min legacy label in fallback) — plan picker reads `GET /api/payment/plans` with `PLAN_FALLBACK = [{ plan: "PREMIUM", hours: 0.75, minutes: 45, amountCedis: 400 }]`. Payment form: Ghana MoMo (networks `GH_NETWORKS`) / Nigeria bank (`NG_BANKS`), screenshot upload via `POST /api/upload` (ImgBB), submits to `POST /api/payment/manual/submit`. `?plan=&game=` search params. **Note:** unlike SignalVault post-2026-11-17, no guest-browse fix is recorded here — verify whether logged-out visitors are redirected to `/login` on mount before promising guest browsing. |
 | `/manual-payment` | `src/routes/manual-payment.tsx` | Manual-payment checkout form (same plan picker + proof upload as pricing, standalone page). Persists `darkweb_manual_id` + `darkweb_email` in localStorage; polls `GET /api/payment/manual/status/:id`. |
 | `/payment/waiting` | `src/routes/payment.waiting.tsx` | Waiting room after submitting proof — polls manual-payment status until approved/rejected. |
-| `/scan` | `src/routes/scan.tsx` | **AI betting-slip scan ("Instant Virtuals" tile target).** Upload slip photo → staged AI analysis (`POST /api/scan/stage/transcribe|gapfill|verify|finalize`, `POST /api/scan/analyze`), buy tab (`SCAN_PLAN_FALLBACK = [{ code: "SCAN_550", name: "PREMIUM", amountCedis: 400, maxPicks: "FULL" }]`), history tab (`?tab=history\|buy`). Costs 5 credits on a completed scan (failed scans free). Image shown with `/games/instant-virtuals.png`. |
+| `/scan` | `src/routes/scan.tsx` | **AI betting-slip scan ("Instant Virtuals" tile target).** Upload slip photo → staged AI analysis (`POST /api/scan/stage/transcribe|gapfill|verify|finalize`, `POST /api/scan/analyze`), buy tab (`SCAN_PLAN_FALLBACK = [{ code: "SCAN_550", name: "PREMIUM", amountCedis: 400, maxPicks: "FULL" }]`), history tab (`?tab=history\|buy`). Costs 4 credits on a completed scan (failed scans free). Image shown with `/games/instant-virtuals.png`. |
 | `/scan-slip` | `src/routes/scan-slip.tsx` | Slip-scan workspace (upload + downscale via `src/lib/downscale-image.ts` + staged scan UI). Shares `SCAN_RESULT_KEY = "darkweb_scan_result"`. |
 | `/scan-result` | `src/routes/scan-result.tsx` | Scan result view — per-fixture predictions, confidence, verification (`verified/mismatch/unverified/unreadable`), raw model output. |
 | `/engines` | `src/routes/engines/index.tsx` | **Public engines lobby** (no login required): 5–6 engine cards with live stats + confidence rings, provably-fair note. Static fallback tiles exist in code; live data from `GET /api/engines`. |
 | `/engines/:gameId` | `src/routes/engines/$gameId.tsx` | Public engine detail (history, stats, fairness verifier `FairnessVerifier.tsx`). |
 | `/predictor` | `src/routes/predictor/index.tsx` + `route.tsx` | **Games lobby (login required).** Loader fetches `GET /api/engines` via `loaderFetch` (see §7 — SSR loader quirk); renders shared `src/components/predictor/casino-lobby.tsx` (engine tiles with lock overlays from `GET /api/games/entitlement`, Mines + Bottle tiles, Instant Virtuals tile → `/scan`). `PredictorLayout` (`route.tsx`) is immersive here (no sidebar/topbar — lobby owns the screen). |
-| `/predictor/:gameId` | `src/routes/predictor/$gameId.tsx` | Per-engine analytics/terminal page (`terminal.tsx`, `PredictorReveal.tsx`, `SignalMeter.tsx`, `charts.tsx`, crash `CrashPredictor.tsx` / `MinimalStage.tsx` / `panels.tsx` / `useCrashRun.ts`, `CrashAnalytics.tsx`, `PenaltyAnalytics.tsx`, `ActionAnalytics.tsx`). Aviator / Sporty Jet / SportyHero are **immersive video pages** (full-screen, no site chrome; videos `aviator-bg.mp4`, `sportyjet-bg.mp4`, `sportyhero-bg.mp4`). 5 credits per round/tick; `POST /api/engines/:id/tick` etc. |
+| `/predictor/:gameId` | `src/routes/predictor/$gameId.tsx` | Aviator analytics/terminal page (`terminal.tsx`, `PredictorReveal.tsx`, `SignalMeter.tsx`, `charts.tsx`, crash `CrashPredictor.tsx` / `MinimalStage.tsx` / `panels.tsx` / `useCrashRun.ts`, `CrashAnalytics.tsx`). Aviator is the **immersive video page** (full-screen, no site chrome; video `aviator-bg.mp4`); any other `:gameId` redirects to `/predictor/aviator`. 4 credits per round/tick; `POST /api/engines/:id/tick` etc. |
 | `/predictor/mines` | `src/routes/predictor/mines.tsx` | Mines — "AI diamond locator" (`MinesBoard.tsx`, mine-count cap 10 = Premium tier). `POST /api/mines/play`, `POST /api/mines/payment/submit` for passes. |
 | `/predictor/bottle` | `src/routes/predictor/bottle.tsx` | Spin da Bottle (`BottleArena.tsx`, `BottleRounds.tsx`) — UP/DOWN calls; super-admin can pin the next 10 calls (`GET/PUT /api/settings/bottle-rounds`). |
 | `/predictor/history` | `src/routes/predictor/history.tsx` | Prediction history (`GET /api/analyses`, `POST /api/analyses`). |
@@ -437,18 +437,18 @@ gateway removed):**
   wallet is now the primary gate, grants are the fallback.
 
 **Prediction engines (`lib/services/engines/`):**
-- 6 engines, singletons, pre-seeded with **120 rounds** each
-  (`lib/services/engines/index.js`): `sporty-jet` (Crash, SportyBet, seed 7),
-  `aviator` (Crash, Spribe, seed 42), `sportykick` (Penalty, SportyBet, seed 13),
-  `sportyhero` (Crash, SportyBet, seed 99, `hero32` 32-bit variant),
-  `super-hero` (Action, SportyBet, seed 5), `test-flight` (Crash · Lab, seed 123,
-  RTP 0.97). Engines: `crash-engine.js` (SHA-512 multi-seed for Aviator/Jet,
-  SHA-256 32-bit for SportyHero — `provably-fair.js`), `penalty-engine.js`,
-  `action-engine.js`, `base-engine.js`, `rng.js` (mulberry32 seeded / Math.random),
-  `stats.js`. Public: `GET /api/engines`, `GET /api/engines/:id`,
+- 1 engine, singleton, pre-seeded with **120 rounds**
+  (`lib/services/engines/index.js`): `aviator` (Crash, Spribe, seed 42) —
+  Aviator-only since the 2026-11-20 owner cut (Sporty Jet, SportyKick,
+  SportyHero, Super Hero, Test Flight removed; `penalty-engine.js` and
+  `action-engine.js` deleted). Engine: `crash-engine.js` (SHA-512 multi-seed
+  Aviator construction — `provably-fair.js`), `base-engine.js`, `rng.js`
+  (mulberry32 seeded / Math.random), `stats.js`. Public:
+  `GET /api/engines`, `GET /api/engines/:id`,
   `GET /api/engines/:id/history|fairness/:round|random-crash`,
-  `POST /api/engines/:id/tick|verify|analyze|simulate`,
-  `GET /api/engines/sportykick|super-hero/zones`.
+  `POST /api/engines/:id/tick|verify|analyze|simulate`. Any other game id
+  404s (`GET /api/engines/:id`, `/api/rounds/next/:gameId`,
+  `/api/admin/rounds/custom[/:gameId]`).
 - **Mines** (`lib/services/minesPurchase.js`, `POST /api/mines/play`) and
   **Bottle** (`lib/services/bottleRounds.js`, `POST /api/bottle/next`,
   super-admin-pinned next-10 pattern) are pass/credit-gated predictors, not
@@ -498,10 +498,10 @@ here — this copy still carries all of them.** Complete list found by grep:
   are the only accessors.
 
 **Provably-fair server seeds (renaming changes every round's crash point):**
-- `darkweb-demo-jet-v1` (sporty-jet), `darkweb-demo-aviator-v1` (aviator),
-  `darkweb-demo-hero-v1` (sportyhero), `darkweb-demo-lab-v1` (test-flight) —
-  all in `lib/services/engines/index.js:18,27,45,63`. SportyKick/Super Hero use
-  numeric seeds only (13 / 5).
+- `darkweb-demo-aviator-v1` (aviator) — the only server seed left, in
+  `lib/services/engines/index.js`. The other seeds (`darkweb-demo-jet-v1`,
+  `darkweb-demo-hero-v1`, `darkweb-demo-lab-v1`) died with the removed
+  engines in the 2026-11-20 Aviator-only cut.
 
 **`dw-` CSS classes / SVG gradient ids (defined in `src/styles.css`, used in
 components — renaming needs a coordinated sweep or styles silently break):**
@@ -524,8 +524,8 @@ components — renaming needs a coordinated sweep or styles silently break):**
   is the stock shadcn sidebar cookie `sidebar_state` (7-day, `src/components/ui/sidebar.tsx:21-22,85-86`) — not brand-related, leave it.
 - **DB table/column names** (§6 list below), **plan codes** (`PREMIUM`,
   `SCAN_550`, `SESSION_550`, `SCAN_*`, `SESSION_*`, `MIN15`, `HOUR1`, `HOUR3`),
-  **engine ids** (`sporty-jet`, `aviator`, `sportykick`, `sportyhero`,
-  `super-hero`, `test-flight`, `mines`, `bottle`, `scan`), **setting keys**
+  **engine ids** (`aviator`, `mines`, `bottle`, `scan` — Aviator-only since
+  the 2026-11-20 cut), **setting keys**
   (`virtual_predictions`, `bottle_round_calls`, `payment_details`),
   **credit-ledger reason codes** (`PASS`, `MANUAL`, `SCAN`, `PLAY_<GAME>`,
   `REFUND_<GAME>`, `SIM_*`, `VIRTUAL_*` — none of the last exist here),
@@ -622,9 +622,9 @@ schema helper — check before touching monitoring tables.
 |---|---|---|
 | Favicons | `favicon.ico` 20 KB, `favicon.svg` 879 B | Green hex vault (§1) — redraw both. |
 | Fonts | `fonts/f1–f18.woff2`, **4.3 MB total** | Largest: `f13.woff2` **3.9 MB** (Material Symbols icon font — preloaded in `__root.tsx`); `f17.woff2` 50 KB (Unbounded latin — preloaded); `f15.woff2` 116 KB; rest 1.7–34 KB. Families: Syne, Space Grotesk, JetBrains Mono, Unbounded (+ Material Symbols). |
-| Game art | `games/` **4.9 MB**, 13 files | `mines-engine-card.png` **3.4 MB** (check whether still referenced — SignalVault deleted it as dead in 2026-11-18; verify here before deleting); `instant-virtuals.png` 323 KB, `mines.png` 372 KB, `spin-bottle.png` 200 KB, `sportyhero-art.png` 206 KB, `aviator-logo.png` 116 KB (also deleted as dead in SignalVault — verify), `aviator.png` 44 KB, `sporty-jet.png` 29 KB, `sportyhero.png` 54 KB, `sportykick.png` 56 KB, `super-hero.png` 66 KB, `aviator-art.webp` 27 KB, `test-flight.png` 849 B (tiny placeholder — SignalVault once deleted it by mistake; it IS referenced by the engines API). |
+| Game art | `games/` **4.9 MB**, 13 files | `mines-engine-card.png` **3.4 MB** (check whether still referenced — SignalVault deleted it as dead in 2026-11-18; verify here before deleting); `instant-virtuals.png` 323 KB, `mines.png` 372 KB, `spin-bottle.png` 200 KB, `aviator-logo.png` 116 KB (also deleted as dead in SignalVault — verify), `aviator.png` 44 KB, `aviator-art.webp` 27 KB. The removed engines' art (`sporty-jet.png`, `sportyhero.png`, `sportyhero-art.png`, `sportykick.png`, `super-hero.png`, `test-flight.png`) is unreferenced since the 2026-11-20 Aviator-only cut. |
 | Hero | `hero-a.webp` 170 KB; `src/assets/hero.jpg` 144 KB | Same photo in two places — **both** must be re-shot/re-graded or they disagree (SignalVault replaced both). |
-| Videos | `videos/` **4.7 MB**, 7 mp4s | `engine-access.mp4` 1.3 MB, `scan-access.mp4` 881 KB, `sportyhero-bg.mp4` 833 KB, `sportyjet-bg.mp4` 706 KB, `aviator-bg.mp4` 501 KB, `auth-access.mp4` 273 KB, `auth-register.mp4` 284 KB. Full-screen backgrounds/overlays — any on-screen brand text inside the video files themselves cannot be changed by a code sweep; check frames. |
+| Videos | `videos/` **4.7 MB**, 7 mp4s | `engine-access.mp4` 1.3 MB, `scan-access.mp4` 881 KB, `aviator-bg.mp4` 501 KB, `auth-access.mp4` 273 KB, `auth-register.mp4` 284 KB. Full-screen backgrounds/overlays — any on-screen brand text inside the video files themselves cannot be changed by a code sweep; check frames. The removed engines' backgrounds (`sportyhero-bg.mp4`, `sportyjet-bg.mp4`) are unreferenced since the 2026-11-20 Aviator-only cut. |
 | Misc | `robots.txt` 160 B (allows all bots incl. Googlebot/Bingbot/Twitterbot/facebookexternalhit) | No `manifest.json`, no `sitemap.xml`, no `og-image` file in `public/` (OG tags in `__root.tsx` have no `og:image` — check before adding one). |
 
 ---
@@ -649,8 +649,9 @@ schema helper — check before touching monitoring tables.
    need paired replacement; the videos cannot be edited by text sweep.
 6. **Dead-weight assets:** `mines-engine-card.png` (3.4 MB) and
    `aviator-logo.png` (116 KB) were dead files in SignalVault — verify
-   references here with grep before deciding to keep/delete; do **not**
-   delete `test-flight.png`.
+   references here with grep before deciding to keep/delete. (The old
+   "do **not** delete `test-flight.png`" note is void: the file is
+   unreferenced since the 2026-11-20 Aviator-only cut.)
 7. **Loader/API-base trap** (§7): if frontend and API deploy as separate
    Vercel projects, the SSR `loaderFetch` path breaks exactly as it did for
    SignalVault (2026-11-18). Keep one project, or fix `loaderApiBase`.

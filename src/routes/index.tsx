@@ -23,34 +23,14 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+// Aviator is the only crash engine (owner order 2026-11-20).
 const GAMES = [
-  {
-    id: "sporty-jet",
-    name: "Sporty Jet",
-    image: "/games/sporty-jet.png",
-    tag: "Crash",
-    blurb: "Cash out before the jet flies away — AI reads the rounds for you.",
-  },
   {
     id: "aviator",
     name: "Aviator",
     image: "/games/aviator.png",
     tag: "Crash",
     blurb: "The legendary red plane — AI times your cash-out to the round.",
-  },
-  {
-    id: "sportykick",
-    name: "SportyKick",
-    image: "/games/sportykick.png",
-    tag: "Penalty",
-    blurb: "Penalty shootout predictions, round by round.",
-  },
-  {
-    id: "sportyhero",
-    name: "SportyHero",
-    image: "/games/sportyhero.png",
-    tag: "Crash",
-    blurb: "The hero takes off — cash out before he flies away.",
   },
 ];
 
@@ -61,7 +41,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Four tiers from GH₵250 for 20 credits to GH₵1,000 for 80 — every scan or play costs 5 credits, and credits never expire. Plus AI betting-slip scans. Bold calls, made in Ghana.",
+          "Four tiers from GH₵250 for 4 credits to GH₵1,000 for 20 credits — every scan or play costs 4 credits, and credits never expire. Plus AI betting-slip scans. Bold calls, made in Ghana.",
       },
       { property: "og:title", content: "SignalVault — Credits & AI Slip Scan" },
       {
@@ -123,7 +103,7 @@ const REVIEWS = [
     name: "Selorm K.",
     role: "Tema",
     stars: 4,
-    text: "One price, no games. Paid GH₵500 for 40 credits on Friday, still had credits left Saturday night.",
+    text: "One price, no games. Paid GH₵500 for 12 credits on Friday, still had credits left Saturday night.",
   },
   {
     name: "Nana Y.",
@@ -149,7 +129,7 @@ const STEPS = [
   ["Sign up", "Name, email, username and password — takes 10 seconds."],
   [
     "Top up",
-    "Four tiers — GH₵250 for 20 credits up to GH₵1,000 for 80. Every scan or play costs 5 credits. Everything unlocked.",
+    "Four tiers — GH₵250 for 4 credits up to GH₵1,000 for 20 credits. Every scan or play costs 4 credits. Everything unlocked.",
   ],
   ["Play", "Jump straight in. Your credits never expire — come back anytime."],
 ];
@@ -193,17 +173,17 @@ function WalletTicket() {
             </span>
           </div>
           <p className="mt-4 font-mono text-5xl font-semibold tracking-tight text-foreground tabular-nums">
-            20–80 <span className="text-2xl">credits</span>
+            4–20 <span className="text-2xl">credits</span>
           </p>
           <p className="mt-1 font-mono text-xl font-semibold text-primary tabular-nums">From GH₵250</p>
           {/* 4-segment thread bar — one segment per tier */}
-          <div className="mt-5 flex gap-1.5" aria-label="Four tiers, 20 to 80 credits">
+          <div className="mt-5 flex gap-1.5" aria-label="Four tiers, 4 to 20 credits">
             {Array.from({ length: 4 }).map((_, i) => (
               <span key={i} className="h-2.5 flex-1 rounded-full bg-primary" />
             ))}
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
-            5 credits per scan or play · Never expires · Top-ups stack
+            4 credits per scan or play · Never expires · Top-ups stack
           </p>
 
           <div className="mt-6 border-t border-dashed border-border pt-5">
@@ -238,11 +218,11 @@ function Home() {
               Made in Ghana · Pay with MoMo
             </span>
             <h1 className="mt-5 text-4xl leading-[1.05] font-black text-foreground sm:text-6xl">
-              From GH₵250. <span className="text-primary">Every engine.</span> Never expires.
+              From GH₵250. <span className="text-primary">Aviator, live.</span> Never expires.
             </h1>
             <p className="mt-5 max-w-lg text-base leading-relaxed text-muted-foreground sm:text-lg">
-              SignalVault reads crash, penalty and hero games live — and scans your slip with AI.
-              Four tiers from GH₵250 for 20 credits to GH₵1,000 for 80, MoMo or bank transfer. Each scan or play costs 5 credits.
+              SignalVault reads Aviator live — and scans your slip with AI.
+              Four tiers from GH₵250 for 4 credits to GH₵1,000 for 20 credits, MoMo or bank transfer. Each scan or play costs 4 credits.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <HeroCta />
@@ -318,9 +298,9 @@ function Home() {
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="text-3xl font-bold sm:text-4xl">Games we cover</h2>
+            <h2 className="text-3xl font-bold sm:text-4xl">The game we cover</h2>
             <p className="text-muted-foreground mt-2">
-              AI predictions for the biggest SportyBet casino titles.
+              AI predictions for Aviator — the one crash engine, live.
             </p>
           </div>
           <Button asChild variant="secondary" className="rounded-full">
@@ -412,11 +392,11 @@ function Home() {
             ],
             [
               "Can I buy two packs at once?",
-              "Yes. Top-ups stack — buy 40 credits now and 40 more later, and your wallet holds 80.",
+              "Yes. Top-ups stack — buy 12 credits now and 40 more later, and your wallet holds 80.",
             ],
             [
               "How does the AI slip scan work?",
-              "You top up credits, submit your payment proof, and once an admin approves it you upload your slip. Each completed scan costs 5 credits — the AI reads every pick and predicts.",
+              "You top up credits, submit your payment proof, and once an admin approves it you upload your slip. Each completed scan costs 4 credits — the AI reads every pick and predicts.",
             ],
             [
               "Can I use my credits on two phones?",

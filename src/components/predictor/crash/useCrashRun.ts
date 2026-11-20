@@ -34,7 +34,7 @@ export function useCrashRun(gameId: string, preferStaffToken = false) {
   const [countdown, setCountdown] = useState(COUNTDOWN_SECS);
   const [rtp, setRtp] = useState(0.97);
   const [error, setError] = useState<string | null>(null);
-  // Credit balance after the latest round's 5-credit spend (null until
+  // Credit balance after the latest round's 4-credit spend (null until
   // the first paid round, or for staff previews which never spend).
   // At 0 the loop stops after the paid round instead of drawing again.
   const [creditsLeft, setCreditsLeft] = useState<number | null>(null);
@@ -220,7 +220,7 @@ export function useCrashRun(gameId: string, preferStaffToken = false) {
     }
     // Admin-set custom rounds take priority (both simulator + live users).
     // The backend consumes them FIFO; no custom round means local random.
-    // Every /api/rounds/next call is one play = 5 credits (staff previews
+    // Every /api/rounds/next call is one play = 4 credits (staff previews
     // never spend). Staff previews (superadmin Live games) have no credit
     // gating — send the staff token first so the server's staff bypass
     // applies instead of a 403. Player engines always send the user token

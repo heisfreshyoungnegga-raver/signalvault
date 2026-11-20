@@ -1,4 +1,4 @@
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -11,61 +11,40 @@ import {
   type AccountUser,
   type EngineDetail,
   type EngineRound,
-  type ZoneStat,
-  type ActionZoneMetric,
 } from "@/lib/api";
 import { CrashAnalytics } from "@/components/predictor/CrashAnalytics";
-import { PenaltyAnalytics } from "@/components/predictor/PenaltyAnalytics";
-import { ActionAnalytics } from "@/components/predictor/ActionAnalytics";
 import { WindowChrome } from "@/components/window-ui";
 
 export const Route = createFileRoute("/predictor/$gameId")({
   loader: async ({ params }) => {
+    // Aviator is the only crash engine (owner order 2026-11-20) — any
+    // deep link to a removed engine lands on Aviator, never a dead page.
+    if (params.gameId !== "aviator") throw redirect({ to: "/predictor/$gameId", params: { gameId: "aviator" } });
     const [detail, history] = await Promise.all([
       loaderFetch<EngineDetail>(`/api/engines/${params.gameId}`).catch(() => null),
       loaderFetch<EngineRound[]>(`/api/engines/${params.gameId}/history?limit=200`).catch(
         () => [] as EngineRound[],
       ),
     ]);
-    // Zone stats for the non-crash games, fetched server-side so the
-    // heatmaps render without a client round-trip.
-    let penaltyZones: ZoneStat[] = [];
-    let actionZones: ActionZoneMetric[] = [];
-    if (params.gameId === "sportykick") {
-      const r = await loaderFetch<{ zones: ZoneStat[] }>(
-        `/api/engines/sportykick/zones?window=120`,
-      ).catch(() => null);
-      penaltyZones = r?.zones ?? [];
-    } else if (params.gameId === "super-hero") {
-      const r = await loaderFetch<{ zones: ActionZoneMetric[] }>(
-        `/api/engines/super-hero/zones?window=120`,
-      ).catch(() => null);
-      actionZones = r?.zones ?? [];
-    }
-    return { detail, history, penaltyZones, actionZones };
+    return { detail, history };
   },
   component: GameAnalyticsPage,
 });
 
 const NAMES: Record<string, string> = {
-  "sporty-jet": "Sporty Jet",
   aviator: "Aviator",
-  sportykick: "SportyKick",
-  sportyhero: "SportyHero",
-  "super-hero": "Super Hero",
-  "test-flight": "Test Flight",
 };
 
 function GameAnalyticsPage() {
   const { gameId } = Route.useParams();
   const navigate = useNavigate();
-  const { detail, history, penaltyZones, actionZones } = Route.useLoaderData();
+  const { detail, history } = Route.useLoaderData();
 
   const name = NAMES[gameId] ?? gameId;
   const type = detail?.prediction?.type;
-  // Immersive video pages (aviator, sporty-jet, sportyhero) own the whole screen —
-  // CrashPredictor renders its own minimal nav, so skip the page header.
-  const isImmersive = gameId === "aviator" || gameId === "sporty-jet" || gameId === "sportyhero";
+  // Aviator is the only immersive video page — CrashPredictor renders
+  // its own minimal nav, so skip the page header.
+  const isImmersive = gameId === "aviator";
 
   // Entitlement: login -> active plan for THIS game.
   // No session -> login. No plan -> plans page.
@@ -194,10 +173,6 @@ function GameAnalyticsPage() {
         </div>
       ) : type === "crash" ? (
         <CrashAnalytics gameId={gameId} gameName={name} />
-      ) : type === "penalty" ? (
-        <PenaltyAnalytics gameName={name} initialZones={penaltyZones} />
-      ) : type === "action" ? (
-        <ActionAnalytics initialZones={actionZones} />
       ) : (
         <p className="text-sm text-muted-foreground">
           Analytics for this engine type are not available yet.

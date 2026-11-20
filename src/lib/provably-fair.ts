@@ -6,8 +6,7 @@
  *
  * Aviator (Spribe, verified): SHA-512(serverSeed + 3 client seeds),
  *   first 13 hex chars (52 bits), crash = floor(0.97 / (1 - h) * 100) / 100.
- * SportyHero (reverse-engineered): SHA-256 chain, first 8 hex chars
- *   (32 bits), crash = max(1.00, round(0.97 * 2^32 / (2^32 - decimal), 2)).
+ * Aviator is the only crash engine (owner order 2026-11-20).
  */
 
 export type CrashDrawLocal = {
@@ -15,16 +14,11 @@ export type CrashDrawLocal = {
   hash: string;
   seed: string;
   clientSeeds: string[];
-  variant: "aviator" | "hero32";
+  variant: "aviator";
 };
 
 async function sha512hex(str: string): Promise<string> {
   const buf = await crypto.subtle.digest("SHA-512", new TextEncoder().encode(str));
-  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-async function sha256hex(str: string): Promise<string> {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
@@ -34,17 +28,12 @@ function randomHex(bytes: number): string {
     .join("");
 }
 
+// gameId is kept for call compatibility — the only engine is Aviator,
+// so every draw uses the Aviator construction regardless of the id.
 /** One independent AI crash-point draw, computed locally with real crypto. */
 export async function drawCrashLocal(gameId: string, rtp = 0.97): Promise<CrashDrawLocal> {
-  const variant = gameId === "sportyhero" ? "hero32" : "aviator";
+  const variant = "aviator" as const;
   const seed = randomHex(16);
-
-  if (variant === "hero32") {
-    const hash = await sha256hex(`${seed}:1`);
-    const decimal = parseInt(hash.slice(0, 8), 16);
-    const crash = Math.max(1.0, Math.round(((rtp * 2 ** 32) / (2 ** 32 - decimal)) * 100) / 100);
-    return { crash, hash, seed, clientSeeds: [], variant };
-  }
 
   // aviator: server seed + 3 simulated client seeds (first three bettors)
   const c1 = randomHex(8);

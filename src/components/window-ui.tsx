@@ -158,7 +158,7 @@ export function OutOfCreditsOverlay({
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Your credits ran out — <span className="font-bold text-foreground">{gameName}</span> is
-            locked again. Each scan or play costs 5 credits. Top up to jump straight
+            locked again. Each scan or play costs 4 credits. Top up to jump straight
             back in.
           </p>
           <Link

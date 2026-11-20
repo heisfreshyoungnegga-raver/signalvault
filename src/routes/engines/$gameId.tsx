@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowLeft,
   Brain,
@@ -235,6 +235,12 @@ function ActionViz({ p }: { p: EnginePrediction }) {
 
 function EngineDashboard() {
   const { gameId } = Route.useParams();
+  const navigate = useNavigate();
+  // Aviator is the only engine (owner order 2026-11-20) — any deep link
+  // to a removed engine lands on Aviator, never a dead page.
+  useEffect(() => {
+    if (gameId !== "aviator") navigate({ to: "/engines/$gameId", params: { gameId: "aviator" }, replace: true });
+  }, [gameId, navigate]);
   const [bankroll, setBankroll] = useState("100");
   const [ticking, setTicking] = useState(false);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);

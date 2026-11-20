@@ -269,12 +269,12 @@ function PaymentWaitingPage() {
           <h1 className="mt-5 text-3xl font-black tracking-tight">Payment approved!</h1>
           {rail === "pricing" && data.game && (
             <p className="text-muted-foreground mt-2 text-sm">
-              {creditsForAmountGhs(data.amount) ?? 30} credits added — entering {data.game}.
+              {creditsForAmountGhs(data.amount) ?? 12} credits added — entering {data.game}.
             </p>
           )}
           {rail === "scan" && (
             <p className="text-muted-foreground mt-2 text-sm">
-              {creditsForTierCode(data.scanPlan) ?? 30} credits added — your slip scanner is ready.
+              {creditsForTierCode(data.scanPlan) ?? 12} credits added — your slip scanner is ready.
             </p>
           )}
           {rail === "manual" && data.password && (

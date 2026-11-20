@@ -1,4 +1,4 @@
-/** Full-page identity per crash game. */
+/** Full-page identity for the one crash game — Aviator (owner order 2026-11-20). */
 export type GamePageTheme = {
   /** rgb triplet for washes and glows */
   glow: string;
@@ -22,29 +22,5 @@ export const GAME_PAGE_THEMES: Record<string, GamePageTheme> = {
     title: "Aviator",
     subtitle: "AI crash-point predictor — every round drawn provably fair",
     crashedWord: "Crashed",
-  },
-  "sporty-jet": {
-    glow: "34,211,238",
-    wash: "radial-gradient(1200px 500px at 50% -10%, rgba(34,211,238,0.09), transparent 70%)",
-    kicker: "SportyBet · Crash",
-    title: "Sporty Jet",
-    subtitle: "AI crash-point predictor — ride the jet to the edge",
-    crashedWord: "Crashed",
-  },
-  sportyhero: {
-    glow: "167,139,250",
-    wash: "radial-gradient(1200px 500px at 50% -10%, rgba(167,139,250,0.1), transparent 70%)",
-    kicker: "SportyBet · Crash",
-    title: "SportyHero",
-    subtitle: "AI crash-point predictor — 32-bit hero rounds, decoded live",
-    crashedWord: "Flew away",
-  },
-  "test-flight": {
-    glow: "52,211,153",
-    wash: "radial-gradient(1200px 500px at 50% -10%, rgba(52,211,153,0.08), transparent 70%)",
-    kicker: "SignalVault Lab · Sandbox",
-    title: "Test Flight",
-    subtitle: "Crash lab — tune the RTP and stress-test the AI",
-    crashedWord: "Terminated",
   },
 };

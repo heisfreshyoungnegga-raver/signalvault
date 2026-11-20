@@ -8,20 +8,15 @@ import { cn } from "@/lib/utils";
 
 const VIDEO_BG: Record<string, string> = {
   aviator: "/videos/aviator-bg.mp4",
-  "sporty-jet": "/videos/sportyjet-bg.mp4",
-  sportyhero: "/videos/sportyhero-bg.mp4",
 };
 
-const CRASH_GAMES = [
-  { id: "aviator", name: "Aviator" },
-  { id: "sporty-jet", name: "Sporty Jet" },
-  { id: "sportyhero", name: "SportyHero" },
-];
+// Aviator is the only crash game (owner order 2026-11-20).
+const CRASH_GAMES = [{ id: "aviator", name: "Aviator" }];
 
 /**
- * Crash predictor: full per-game page identity — background wash, header,
+ * Crash predictor: Aviator page identity — background wash, header,
  * stage glow, button and accents all take the game's color.
- * Aviator + SportyHero are immersive: full-screen video background, the
+ * Aviator is immersive: full-screen video background, the
  * predictor floats as a fixed glass panel with internal scroll.
  */
 export function CrashPredictor({ gameId, gameName }: { gameId: string; gameName: string }) {
@@ -136,7 +131,7 @@ function PredictorBody({
           {creditsLeft != null && (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary-soft px-3 py-1.5 text-[11px] font-bold text-primary">
               <MaterialIcon name="account_balance_wallet" className="text-[14px]" />
-              {creditsLeft} credits · 5 per round
+              {creditsLeft} credits · 4 per round
             </span>
           )}
           <NextRunPanel phase={phase} mult={run.mult} countdown={run.countdown} glow={gt.glow} />

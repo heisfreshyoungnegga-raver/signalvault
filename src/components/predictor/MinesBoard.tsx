@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
  * Run Predictor animates the reveal of every diamond (and mine).
  * No betting, no cashout — a predictor board, exactly like the source.
  *
- * CREDIT GATE (2026-11-06): each Run Predictor costs 5 credits — the
+ * CREDIT GATE (2026-11-06): each Run Predictor costs 4 credits — the
  * board spends via POST /api/mines/play BEFORE revealing anything, and
  * locks behind the out-of-credits overlay when the wallet is empty.
  * Sandbox (staff playtest) never spends.
@@ -103,7 +103,7 @@ export function MinesBoard({
 
   async function runPrediction() {
     if (!gridGenerated || running || tileVisuals) return;
-    // Spend 5 credits BEFORE revealing anything (sandbox never spends).
+    // Spend 4 credits BEFORE revealing anything (sandbox never spends).
     if (!sandbox) {
       try {
         const r = await api<{ credits: CreditSummary }>("/api/mines/play", {
@@ -183,7 +183,7 @@ export function MinesBoard({
           {!sandbox && creditsLeft != null && (
             <span className="inline-flex items-center gap-1 rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-[11px] font-bold text-success">
               <MaterialIcon name="account_balance_wallet" className="text-[13px]" />
-              {creditsLeft} credits · 5 per game
+              {creditsLeft} credits · 4 per game
             </span>
           )}
         </span>

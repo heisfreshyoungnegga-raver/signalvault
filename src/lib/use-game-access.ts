@@ -12,7 +12,7 @@ import {
 /**
  * Access gate for the credit-gated predictor pages (Mines, Spin da Bottle) —
  * the same contract as the engine pages in predictor/$gameId.tsx:
- *   no session → /login · fewer than 5 credits → /pricing?game=
+ *   no session → /login · fewer than 4 credits → /pricing?game=
  * plus the platform kill switch: when virtual predictions are OFF on the
  * server, the page renders the offline state instead of the game.
  * The switch only blocks on an explicit OFF — if the settings read fails

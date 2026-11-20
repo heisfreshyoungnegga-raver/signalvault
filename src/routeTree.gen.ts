@@ -20,7 +20,6 @@ import { Route as ScanRouteImport } from './routes/scan'
 import { Route as ScanResultRouteImport } from './routes/scan-result'
 import { Route as ScanSlipRouteImport } from './routes/scan-slip'
 import { Route as SimulatorRouteImport } from './routes/simulator'
-import { Route as VirtualsRouteImport } from './routes/virtuals'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as EnginesIndexRouteImport } from './routes/engines/index'
@@ -94,11 +93,6 @@ const ScanSlipRoute = ScanSlipRouteImport.update({
 const SimulatorRoute = SimulatorRouteImport.update({
   id: '/simulator',
   path: '/simulator',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VirtualsRoute = VirtualsRouteImport.update({
-  id: '/virtuals',
-  path: '/virtuals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -209,7 +203,6 @@ export interface FileRoutesByFullPath {
   '/scan-result': typeof ScanResultRoute
   '/scan-slip': typeof ScanSlipRoute
   '/simulator': typeof SimulatorRouteWithChildren
-  '/virtuals': typeof VirtualsRoute
   '/admin/login': typeof AdminLoginRoute
   '/engines/$gameId': typeof EnginesGameIdRoute
   '/payment/waiting': typeof PaymentWaitingRoute
@@ -241,7 +234,6 @@ export interface FileRoutesByTo {
   '/scan-result': typeof ScanResultRoute
   '/scan-slip': typeof ScanSlipRoute
   '/simulator': typeof SimulatorRouteWithChildren
-  '/virtuals': typeof VirtualsRoute
   '/admin/login': typeof AdminLoginRoute
   '/engines/$gameId': typeof EnginesGameIdRoute
   '/payment/waiting': typeof PaymentWaitingRoute
@@ -275,7 +267,6 @@ export interface FileRoutesById {
   '/scan-result': typeof ScanResultRoute
   '/scan-slip': typeof ScanSlipRoute
   '/simulator': typeof SimulatorRouteWithChildren
-  '/virtuals': typeof VirtualsRoute
   '/admin/login': typeof AdminLoginRoute
   '/engines/$gameId': typeof EnginesGameIdRoute
   '/payment/waiting': typeof PaymentWaitingRoute
@@ -310,7 +301,6 @@ export interface FileRouteTypes {
     | '/scan-result'
     | '/scan-slip'
     | '/simulator'
-    | '/virtuals'
     | '/admin/login'
     | '/engines/$gameId'
     | '/payment/waiting'
@@ -342,7 +332,6 @@ export interface FileRouteTypes {
     | '/scan-result'
     | '/scan-slip'
     | '/simulator'
-    | '/virtuals'
     | '/admin/login'
     | '/engines/$gameId'
     | '/payment/waiting'
@@ -375,7 +364,6 @@ export interface FileRouteTypes {
     | '/scan-result'
     | '/scan-slip'
     | '/simulator'
-    | '/virtuals'
     | '/admin/login'
     | '/engines/$gameId'
     | '/payment/waiting'
@@ -409,7 +397,6 @@ export interface RootRouteChildren {
   ScanResultRoute: typeof ScanResultRoute
   ScanSlipRoute: typeof ScanSlipRoute
   SimulatorRoute: typeof SimulatorRouteWithChildren
-  VirtualsRoute: typeof VirtualsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   EnginesGameIdRoute: typeof EnginesGameIdRoute
   PaymentWaitingRoute: typeof PaymentWaitingRoute
@@ -496,13 +483,6 @@ declare module '@tanstack/react-router' {
       path: '/simulator'
       fullPath: '/simulator'
       preLoaderRoute: typeof SimulatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/virtuals': {
-      id: '/virtuals'
-      path: '/virtuals'
-      fullPath: '/virtuals'
-      preLoaderRoute: typeof VirtualsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -697,7 +677,6 @@ const rootRouteChildren: RootRouteChildren = {
   ScanResultRoute: ScanResultRoute,
   ScanSlipRoute: ScanSlipRoute,
   SimulatorRoute: SimulatorRouteWithChildren,
-  VirtualsRoute: VirtualsRoute,
   AdminLoginRoute: AdminLoginRoute,
   EnginesGameIdRoute: EnginesGameIdRoute,
   PaymentWaitingRoute: PaymentWaitingRoute,

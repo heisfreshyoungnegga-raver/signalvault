@@ -4,16 +4,10 @@ import { cn } from "@/lib/utils";
 
 const BAR: Record<string, string> = {
   aviator: "bg-red-500",
-  "sporty-jet": "bg-secondary",
-  sportyhero: "bg-primary",
-  "test-flight": "bg-success",
 };
 
 const SOLID: Record<string, string> = {
   aviator: "text-red-500",
-  "sporty-jet": "text-secondary",
-  sportyhero: "text-primary",
-  "test-flight": "text-success",
 };
 
 /**
@@ -21,7 +15,7 @@ const SOLID: Record<string, string> = {
  * A whisper of glow, a hairline progress bar, nothing else.
  */
 export function MinimalStage({ run, gameId, compact }: { run: CrashRun; gameId: string; compact?: boolean | undefined }) {
-  const { phase, mult, draw, rtp, setRtp, countdown } = run;
+  const { phase, mult, draw, countdown } = run;
   const gt = GAME_PAGE_THEMES[gameId] ?? GAME_PAGE_THEMES["aviator"]!;
   const glow = gt.glow;
   const bar = BAR[gameId] ?? BAR["aviator"]!;
@@ -71,7 +65,7 @@ export function MinimalStage({ run, gameId, compact }: { run: CrashRun; gameId: 
             <div className="mt-8 h-[3px] w-56 overflow-hidden rounded-full bg-muted md:w-72">
               <div
                 className={cn("h-full rounded-full", bar)}
-                style={{ width: `${(countdown / 5) * 100}%`, boxShadow: `0 0 12px rgba(${glow},0.8)` }}
+                style={{ width: `${(countdown / 4) * 100}%`, boxShadow: `0 0 12px rgba(${glow},0.8)` }}
               />
             </div>
           </>
@@ -116,22 +110,6 @@ export function MinimalStage({ run, gameId, compact }: { run: CrashRun; gameId: 
           </>
         )}
 
-        {/* lab RTP control stays minimal */}
-        {gameId === "test-flight" && (
-          <div className="mt-8 w-full max-w-xs">
-            <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              <span>RTP</span>
-              <span className="text-sm font-black tabular-nums text-success">{(rtp * 100).toFixed(1)}%</span>
-            </div>
-            <input
-              type="range" min={90} max={99} step={0.5}
-              value={rtp * 100}
-              disabled={phase !== "idle"}
-              onChange={(e) => setRtp(Number(e.target.value) / 100)}
-              className="mt-2 w-full accent-primary disabled:opacity-40"
-            />
-          </div>
-        )}
       </div>
 
       <style>{`

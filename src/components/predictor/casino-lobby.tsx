@@ -10,19 +10,17 @@ import { cn } from "@/lib/utils";
 // best artwork per game — real art where we have it
 const ART: Record<string, string> = {
   aviator: "/games/aviator-art.webp",
-  sportyhero: "/games/sportyhero-art.png",
 };
 
 const BADGE: Record<string, "HOT" | "NEW"> = {
   aviator: "HOT",
-  sportyhero: "HOT",
-  "test-flight": "NEW",
 };
 
-const CATS = ["All", "Crash", "Penalty", "Action"] as const;
+const CATS = ["All", "Crash"] as const;
 
-// the only games we predict — everything else stays out of the lobby
-const PREDICTED_GAMES = ["sporty-jet", "aviator", "sportykick", "sportyhero", "super-hero", "test-flight"];
+// the only game we predict — Aviator (owner order 2026-11-20).
+// Everything else stays out of the lobby.
+const PREDICTED_GAMES = ["aviator"];
 
 // pass-only predictors (ported from VirtuWin) — not engine-registry
 // games, so their tiles are declared here with the same lock treatment
@@ -64,10 +62,11 @@ function catOf(g: EngineGame): string {
 // "{balance} credits". (The old mm:ss countdown died with the
 // 45-minute window model; credits never expire.)
 
-// Slip Scan — the AI slip scan's front door: a poster tile in the
-// games grid (1X2 probability row) that opens the scan. The poster art
-// (public/games/instant-virtuals.png) is kept as-is. Same tile shell as
-// every game, so the height matches too.
+// Instant Virtuals — the AI slip scan's front door, presented exactly
+// the way dark web presents it: a poster tile in the games grid (1X2
+// probability row) that opens the scan. The poster is the Virtual
+// Football art (public/games/instant-virtuals.png), kept as-is. Same
+// tile shell as every game, so the height matches too.
 //
 // Lock treatment: the scan page already enforces purchase-before-scan,
 // and this tile is the lobby-side signal of that same gate — when the
@@ -97,7 +96,7 @@ function InstantVirtualsTile({
       <div className="relative aspect-[1/1.02] shrink-0 overflow-hidden bg-muted">
         <img
           src="/games/instant-virtuals.png"
-          alt="Slip Scan"
+          alt="Instant Virtuals"
           loading="lazy"
           className={cn("absolute inset-0 h-full w-full object-cover", showLocked && "grayscale-[35%]")}
         />
@@ -130,7 +129,7 @@ function InstantVirtualsTile({
         )}
       </div>
       <div className="flex flex-1 flex-col items-center justify-center px-2 py-2.5 text-center">
-        <p className="w-full truncate text-[13px] font-bold text-foreground">Slip Scan</p>
+        <p className="w-full truncate text-[13px] font-bold text-foreground">Instant Virtuals</p>
         {showLocked ? (
           <p className="mt-0.5 w-full truncate text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
             Locked — tap to top up
@@ -155,91 +154,6 @@ function InstantVirtualsTile({
   }
   return (
     <Link to="/scan" className={TILE_CLS}>
-      {inner}
-    </Link>
-  );
-}
-
-// Instant Virtuals — the virtual-football game (NOT the slip scan):
-// poster tile in the Extra Predictors grid that opens /virtuals.
-// Same tile shell as every game. Lock rule mirrors the source lobby:
-// a signed-in account with fewer than 5 credits sees it locked
-// (guests see it unlocked — watching the board is free); locked taps
-// go to /pricing, unlocked taps go to /virtuals. Art is the
-// instant-virtuals poster already in public/games.
-function VirtualFootballTile({
-  locked,
-  simMode,
-  onLockedGame,
-}: {
-  locked: boolean;
-  simMode?: boolean;
-  onLockedGame?: (gameId: string) => void;
-}) {
-  const inner = (
-    <>
-      <div className="relative aspect-[1/1.02] shrink-0 overflow-hidden bg-muted">
-        <img
-          src="/games/instant-virtuals.png"
-          alt="Instant Virtuals"
-          loading="lazy"
-          className={cn("absolute inset-0 h-full w-full object-cover", locked && "grayscale-[35%]")}
-        />
-        {locked && (
-          <span className="absolute inset-0 z-10 grid place-items-center bg-[#FBF6EC]/70">
-            <span className="grid size-12 place-items-center rounded-full border border-primary/30 bg-primary-soft">
-              <MaterialIcon name="lock" filled className="text-[24px] text-primary" />
-            </span>
-          </span>
-        )}
-        {!locked && (
-          <>
-            <span className="absolute left-2.5 top-2.5 z-10 inline-flex items-center gap-1.5 rounded-full border border-border bg-white/95 px-2.5 py-1 text-[10px] font-black tracking-wider text-success">
-              <span className="size-1.5 animate-pulse rounded-full bg-success" />
-              LIVE
-            </span>
-            <span className="absolute inset-x-0 bottom-0 z-10 flex divide-x divide-border border-t border-border bg-white/90 text-center backdrop-blur">
-              {[
-                ["Min stake", "5 cr"],
-                ["Round", "3 min"],
-                ["Markets", "5"],
-              ].map(([k, v]) => (
-                <span key={k} className="flex-1 py-1.5">
-                  <span className="block text-[9px] font-black uppercase tracking-wider text-muted-foreground">{k}</span>
-                  <span className="block text-[11px] font-black text-foreground">{v}</span>
-                </span>
-              ))}
-            </span>
-          </>
-        )}
-      </div>
-      <div className="flex flex-1 flex-col items-center justify-center px-2 py-2.5 text-center">
-        <p className="w-full truncate text-[13px] font-bold text-foreground">Instant Virtuals</p>
-        {locked ? (
-          <p className="mt-0.5 w-full truncate text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            Locked — tap to top up
-          </p>
-        ) : (
-          <p className="mt-0.5 w-full truncate text-[10px] font-bold uppercase tracking-wider text-primary">
-            Virtual football — tap to play
-          </p>
-        )}
-      </div>
-    </>
-  );
-  if (locked) {
-    return simMode && onLockedGame ? (
-      <button type="button" onClick={() => onLockedGame("virtuals")} className={cn(TILE_CLS, "text-left")}>
-        {inner}
-      </button>
-    ) : (
-      <Link to="/pricing" className={TILE_CLS}>
-        {inner}
-      </Link>
-    );
-  }
-  return (
-    <Link to="/virtuals" className={TILE_CLS}>
       {inner}
     </Link>
   );
@@ -379,14 +293,7 @@ export function CasinoLobbyView({
   const walletUrgent = creditsBalance !== null && creditsBalance <= 5;
   const isExpired = (gameId: string) => me?.games?.[gameId]?.state === "expired";
 
-  const showScan = "slip scan ai".includes(q.trim().toLowerCase());
-
-  // Instant Virtuals lock — mirrors the source lobby: only a signed-in
-  // account holding fewer than 5 credits sees it locked (guests see it
-  // unlocked — watching the board is free).
-  const virtualsLocked = me != null && (creditsBalance ?? 0) < 5;
-  const showVirtuals =
-    q.trim() === "" || "instant virtuals virtual football".includes(q.trim().toLowerCase());
+  const showScan = "slip scan ai instant virtuals".includes(q.trim().toLowerCase());
   const extraVisible = EXTRA_GAMES.filter((g) =>
     g.name.toLowerCase().includes(q.trim().toLowerCase()),
   );
@@ -402,7 +309,7 @@ export function CasinoLobbyView({
           {creditsBalance != null && (
             <span className="ml-auto inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary-soft px-3 py-1.5 text-[11px] font-bold text-primary">
               <MaterialIcon name="account_balance_wallet" className="text-[14px]" />
-              <span className="font-mono tabular-nums">{creditsBalance} credits · 5 per play</span>
+              <span className="font-mono tabular-nums">{creditsBalance} credits · 4 per play</span>
               <Link to="/pricing" className="text-primary underline underline-offset-2">
                 Top up
               </Link>
@@ -421,7 +328,7 @@ export function CasinoLobbyView({
               <div className="min-w-[140px]">
                 <p className="text-sm font-black tracking-tight">Top up credits</p>
                 <p className="text-xs text-muted-foreground">
-                  5 credits per play · never expires · top-ups stack
+                  4 credits per play · never expires · top-ups stack
                 </p>
               </div>
               <div className="grid flex-1 grid-cols-2 gap-2 sm:grid-cols-4">
@@ -442,7 +349,7 @@ export function CasinoLobbyView({
                       GH₵{tier.priceGhs.toLocaleString()}
                       <span className="font-medium text-muted-foreground">
                         {" "}
-                        · ₦{tier.priceNgn.toLocaleString()}
+                        {tier.priceNgn != null ? `· ₦${tier.priceNgn.toLocaleString()}` : "· NGN to be set"}
                       </span>
                     </p>
                   </Link>
@@ -535,14 +442,13 @@ export function CasinoLobbyView({
           </div>
         )}
 
-        {/* Extra Predictors — pass-only games (Mines + Spin da Bottle)
-            plus Instant Virtuals, grouped under their own heading apart
-            from the main games */}
-        {(extraVisible.length > 0 || showVirtuals) && (
+        {/* Extra Predictors — pass-only games (Mines + Spin da Bottle),
+            grouped under their own heading apart from the main games */}
+        {extraVisible.length > 0 && (
           <>
             <h2 className="pt-2 text-lg font-black tracking-tight text-secondary md:text-xl">
               Extra Predictors <span className="text-muted-foreground">·</span>{" "}
-              <span className="text-base font-bold text-muted-foreground">Mines, bottle &amp; virtuals</span>
+              <span className="text-base font-bold text-muted-foreground">Mines &amp; bottle</span>
             </h2>
             <div className="grid auto-rows-fr grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6">
               {extraVisible.map((g) => {
@@ -576,9 +482,6 @@ export function CasinoLobbyView({
                   </Link>
                 );
               })}
-              {showVirtuals && (
-                <VirtualFootballTile locked={virtualsLocked} simMode={simMode} onLockedGame={onLockedGame} />
-              )}
             </div>
           </>
         )}

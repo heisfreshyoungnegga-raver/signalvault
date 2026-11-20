@@ -246,7 +246,7 @@ function AnalyzeTab({
   // CREDIT WALLET (2026-11-06): the panel reads the wallet, not the
   // legacy grant window. No countdown — credits never expire.
   const creditsBalance = credits?.balance ?? null;
-  const scansAffordable = creditsBalance == null ? null : Math.floor(creditsBalance / 5);
+  const scansAffordable = creditsBalance == null ? null : Math.floor(creditsBalance / 4);
 
   const analyze = async () => {
     if (!file) {
@@ -331,8 +331,8 @@ function AnalyzeTab({
 
   if (!hasAccess) {
     const lockedReason =
-      creditsBalance != null && creditsBalance < 5
-        ? "You're out of credits — each scan costs 5."
+      creditsBalance != null && creditsBalance < 4
+        ? "You're out of credits — each scan costs 4."
         : null;
     return (
       <div className="space-y-6 border border-primary/15 bg-card rounded-2xl p-6">
@@ -345,7 +345,7 @@ function AnalyzeTab({
           onClick={goBuy}
           className="inline-block rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white"
         >
-          Top up 30 credits — GHS 400
+          Top up credits — GHS 400
         </button>
       </div>
     );
@@ -364,7 +364,7 @@ function AnalyzeTab({
           <div className="rounded-xl bg-primary/10 px-4 py-3 text-sm leading-relaxed">
             <span className="font-bold">{creditsBalance} credits</span>
             <span className="text-muted-foreground">
-              {" "}· each scan costs 5 credits
+              {" "}· each scan costs 4 credits
               {scansAffordable != null && scansAffordable > 0 && (
                 <> · {scansAffordable} {scansAffordable === 1 ? "scan" : "scans"} left</>
               )}
@@ -453,7 +453,7 @@ function AnalyzeTab({
           </button>
         )}
         <p className="text-xs leading-relaxed text-muted-foreground">
-          One pack = 30 credits. Each completed scan costs 5 credits — failed or
+          One pack = 12 credits. Each completed scan costs 4 credits — failed or
           cancelled scans cost nothing.
         </p>
       </div>

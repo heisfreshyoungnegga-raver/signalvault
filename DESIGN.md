@@ -551,8 +551,8 @@ the new brand will ship with old-brand pixels inside it:
 | Asset | Decision |
 |---|---|
 | `public/hero-a.webp` + `src/assets/hero.jpg` (same photo, two places) | **Drop both.** The new hero has no photo. Delete the files and their references, or keep them unused — do not leave a reference to either. |
-| `public/games/*.png` (game art: aviator, sporty-jet, sportyhero, sportykick, super-hero, mines, spin-bottle, instant-virtuals, test-flight) | **Keep.** They are the games' own art, not brand art. Re-tint only if a file carries old-brand UI inside the image itself — check each file's pixels. `mines-engine-card.png` (3.4 MB) and `aviator-logo.png` were dead weight in SignalVault — verify with grep before deleting here; do **not** delete `test-flight.png` (referenced by the engines API). |
-| `public/videos/*.mp4` (auth-access, auth-register, engine-access, scan-access, aviator-bg, sportyjet-bg, sportyhero-bg) | **Default: stop using the three interstitial videos** (auth ×2, engine-access) — replaced by the woven splash. **Keep the three immersive game backgrounds** behind the new cream-glass overlays, but check their frames for old-brand text/UI; if any frame shows it, raise the veil opacity or drop that video to a still. `scan-access.mp4` is replaced by the still slip-preview card. |
+| `public/games/*.png` (game art: aviator, mines, spin-bottle, instant-virtuals) | **Keep.** They are the games' own art, not brand art. Re-tint only if a file carries old-brand UI inside the image itself — check each file's pixels. `mines-engine-card.png` (3.4 MB) and `aviator-logo.png` were dead weight in SignalVault — verify with grep before deleting here. The removed engines' art (sporty-jet, sportyhero, sportykick, super-hero, test-flight) is unreferenced since the 2026-11-20 Aviator-only cut. |
+| `public/videos/*.mp4` (auth-access, auth-register, engine-access, scan-access, aviator-bg) | **Default: stop using the three interstitial videos** (auth ×2, engine-access) — replaced by the woven splash. **Keep the one immersive game background** (`aviator-bg.mp4`) behind the new cream-glass overlay, but check its frames for old-brand text/UI; if any frame shows it, raise the veil opacity or drop that video to a still. `scan-access.mp4` is replaced by the still slip-preview card. The removed engines' backgrounds (sportyjet-bg, sportyhero-bg) are unreferenced since the 2026-11-20 Aviator-only cut. |
 | `public/fonts/f1–f18.woff2` (4.3 MB) | Keep Material Symbols (f13) and any files the new fonts need; the Unbounded/Space Grotesk/JetBrains Mono files become dead weight once the tokens change — remove them from `fonts.css` and the preloads in `__root.tsx` if nothing references them. |
 | `public/favicon.svg` / `favicon.ico` | Redraw as the weave mark (above). |
 
@@ -625,8 +625,8 @@ too.
 - **API paths** (all 163 `/api/…` routes), **DB table/column names**
   (42 tables in `lib/schema.sql`), **plan codes** (`PREMIUM`, `SCAN_550`,
   `SESSION_550`, `SCAN_*`, `SESSION_*`, `MIN15`, `HOUR1`, `HOUR3`),
-  **engine ids** (`sporty-jet`, `aviator`, `sportykick`, `sportyhero`,
-  `super-hero`, `test-flight`, `mines`, `bottle`, `scan`),
+  **engine ids** (`aviator`, `mines`, `bottle`, `scan` — Aviator-only since
+  the 2026-11-20 cut),
   **setting keys** (`virtual_predictions`, `bottle_round_calls`,
   `payment_details`), **credit-ledger reason codes** (`PASS`, `MANUAL`,
   `SCAN`, `PLAY_<GAME>`, `REFUND_<GAME>`, `SIM_*`),
@@ -706,7 +706,8 @@ no `/virtuals`, no self-hosted uploads — Path A is a pure rebrand).
 8. **Assets:** hero photo references removed; favicons redrawn; auth /
    engine / scan videos either replaced by the woven splash or re-graded
    and frame-checked; no game-art file deleted without a grep proving it
-   unreferenced (never `test-flight.png`).
+   unreferenced (the removed engines' art is unreferenced since the
+   2026-11-20 Aviator-only cut).
 9. **No scope creep:** no tiers, no `/virtuals`, no upload-implementation
    port, no password-storage change, no token-storage move, no API-path /
    table / seed renames. Anything in the "deliberately NOT renamed" list

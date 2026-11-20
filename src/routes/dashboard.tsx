@@ -146,7 +146,7 @@ function DashboardPage() {
               {wallet ? `${wallet.balance} credits` : "—"}
             </p>
             <p className="text-muted-foreground mt-3 text-sm">
-              5 credits per scan or play · Never expires · Top-ups stack
+              4 credits per scan or play · Never expires · Top-ups stack
             </p>
             <Button asChild className="mt-6 rounded-full">
               <Link to="/pricing">Top up credits — from GH₵250</Link>
@@ -175,7 +175,7 @@ function DashboardPage() {
             </span>
             <h2 className="mt-4 text-lg font-bold">Engines</h2>
             <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
-              Crash, penalty and hero calls — 5 credits a play.
+              Aviator crash calls — 4 credits a play.
             </p>
             <Button asChild variant="secondary" className="mt-5 rounded-xl">
               <Link to="/predictor">Open lobby</Link>
@@ -188,7 +188,7 @@ function DashboardPage() {
             </span>
             <h2 className="mt-4 text-lg font-bold">AI betting-slip scan</h2>
             <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
-              Upload a slip and get AI predictions on your picks. Each completed scan costs 5
+              Upload a slip and get AI predictions on your picks. Each completed scan costs 4
               credits.
             </p>
             <Button asChild variant="secondary" className="mt-5 rounded-xl">
@@ -202,7 +202,7 @@ function DashboardPage() {
             </span>
             <h2 className="mt-4 text-lg font-bold">Need more credits?</h2>
             <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
-              Four tiers — 20 to 80 credits, from GH₵250. Top-ups stack and never expire.
+              Four tiers — 4 to 20 credits, from GH₵250. Top-ups stack and never expire.
             </p>
             <Button asChild variant="secondary" className="mt-5 rounded-xl">
               <Link to="/pricing">Top up</Link>

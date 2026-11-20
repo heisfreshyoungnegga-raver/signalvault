@@ -4,12 +4,8 @@ import { api, adminToken } from "@/lib/api";
 import { GAME_PAGE_THEMES } from "@/components/predictor/crash/gameThemes";
 import { cn } from "@/lib/utils";
 
-const GAMES = [
-  { id: "aviator", name: "Aviator" },
-  { id: "sporty-jet", name: "Sporty Jet" },
-  { id: "sportyhero", name: "SportyHero" },
-  { id: "test-flight", name: "Test Flight" },
-];
+// Aviator is the only crash engine (owner order 2026-11-20).
+const GAMES = [{ id: "aviator", name: "Aviator" }];
 
 type RoundRow = { index: number; crash: number; setBy?: string | null };
 

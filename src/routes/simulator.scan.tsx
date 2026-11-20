@@ -201,7 +201,7 @@ function ScanPage() {
                   <ul className="mt-5 flex-1 space-y-2.5 text-sm text-muted-foreground">
                     <li className="flex gap-2.5">
                       <MaterialIcon name="check_circle" className="mt-0.5 shrink-0 text-[18px] text-success" />
-                      30 credits — 6 scans per pack, 5 credits each
+                      12 credits — 3 scans per pack, 4 credits each
                     </li>
                     <li className="flex gap-2.5">
                       <MaterialIcon name="check_circle" className="mt-0.5 shrink-0 text-[18px] text-success" />
@@ -416,7 +416,7 @@ function BuyTab({
               >
                 {SCAN_PLAN_FALLBACK.map((p) => (
                   <option key={p.code} value={p.code}>
-                    30 credits — {country === "nigeria" ? "NGN 75,000" : `GHS ${p.amountCedis}`}
+                    12 credits — {country === "nigeria" ? "NGN — to be set" : `GHS ${p.amountCedis}`}
                   </option>
                 ))}
               </select>
@@ -447,7 +447,7 @@ function BuyTab({
                 {simCurrency} {simAmount}
               </p>
               <p className="text-sm text-muted-foreground">
-                30 credits — each completed scan costs 5 · credits never expire ·{" "}
+                12 credits — each completed scan costs 4 · credits never expire ·{" "}
                 {scanPlanTagline(SCAN_PLAN_FALLBACK[0]!)}
               </p>
             </div>

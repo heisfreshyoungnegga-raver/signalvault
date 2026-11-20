@@ -6,11 +6,8 @@ import {
 } from "@/components/predictor/terminal";
 import { EquityChart } from "@/components/predictor/charts";
 
-const GAMES = [
-  { id: "sporty-jet", name: "Sporty Jet" },
-  { id: "aviator", name: "Aviator" },
-  { id: "sportyhero", name: "SportyHero" },
-];
+// Aviator is the only crash engine (owner order 2026-11-20).
+const GAMES = [{ id: "aviator", name: "Aviator" }];
 
 export function SimulationLab() {
   const [gameId, setGameId] = useState("aviator");

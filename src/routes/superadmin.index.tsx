@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SuperadminNextRuns } from "@/components/predictor/SuperadminNextRuns";
 import { RoundCustomization } from "@/components/predictor/RoundCustomization";
 import { BottleRoundsEditor } from "@/components/predictor/BottleRounds";
+import { CreditLedgerView } from "@/components/admin/CreditLedgerView";
 import { adminToken, api } from "@/lib/api";
 
 import { DataTable, TableSkeleton } from "./admin.index";
@@ -277,6 +278,7 @@ function SuperAdminDashboard() {
               ["users", "Users"],
               ["commissions", "Commissions"],
               ["payouts", "Payouts"],
+              ["credits", "Credit ledger"],
               ["ghana-deposits", "Ghana deposits"],
               ["nigeria-deposits", "Nigeria deposits"],
             ] as const
@@ -478,6 +480,9 @@ function SuperAdminDashboard() {
         </TabsContent>
         <TabsContent value="payouts" className="mt-6">
           <DataTable rows={payouts.data ?? []} loading={payouts.isLoading} />
+        </TabsContent>
+        <TabsContent value="credits" className="mt-6">
+          <CreditLedgerView token={token} endpoint="/api/superadmin/credits" />
         </TabsContent>
         <TabsContent value="users" className="mt-6">
           <UsersTab />

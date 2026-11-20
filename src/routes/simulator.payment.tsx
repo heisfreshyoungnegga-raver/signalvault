@@ -39,11 +39,6 @@ export const Route = createFileRoute("/simulator/payment")({
 // payment would.
 const GAMES: { id: string; name: string }[] = [
   { id: "aviator", name: "Aviator" },
-  { id: "sporty-jet", name: "Sporty Jet" },
-  { id: "sportyhero", name: "SportyHero" },
-  { id: "sportykick", name: "SportyKick" },
-  { id: "super-hero", name: "Super Hero" },
-  { id: "test-flight", name: "Test Flight" },
   { id: "mines", name: "Mines" },
   { id: "bottle", name: "Spin da Bottle" },
   // Sim-only product: the Instant Virtuals tile's front door. Approval
@@ -199,7 +194,7 @@ function PaymentPage() {
       await simApprove(id, saToken);
       window.sessionStorage.setItem(
         NOTICE_KEY,
-        `Payment approved — 30 credits added to your wallet.`,
+        `Payment approved — 12 credits added to your wallet.`,
       );
       navigate({ to: "/simulator" });
     } catch {
@@ -258,8 +253,8 @@ function PaymentPage() {
           <div className="space-y-6">
             <h1 className="text-xl font-black tracking-tight">Pay for {game.name}</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              One pack = 30 credits for {game.name} and every other game, plus AI slip scans.
-              Each scan or play costs 5 credits and credits never expire — transfer the
+              One pack = 12 credits for {game.name} and every other game, plus AI slip scans.
+              Each scan or play costs 4 credits and credits never expire — transfer the
               amount, submit your details, and we&apos;ll credit your wallet.
             </p>
             <Tabs
@@ -284,7 +279,7 @@ function PaymentPage() {
                 Amount to pay
               </p>
               <p className="mt-2 text-3xl font-black tracking-tight">
-                Send exactly {country === "ghana" ? "GHS 400" : "NGN 75,000"} for 30 credits
+                Send exactly {country === "ghana" ? "GHS 400" : "NGN — to be set"} for 12 credits
               </p>
             </div>
             {details && (

@@ -7,14 +7,9 @@ import {
   History,
   Settings,
   Plane,
-  Rocket,
-  Goal,
-  Zap,
-  Sparkles,
   Gem,
   Wine,
   ScanSearch,
-  Trophy,
   Wallet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -24,14 +19,8 @@ export const Route = createFileRoute("/predictor")({
   component: PredictorLayout,
 });
 
-const GAME_NAV = [
-  { id: "sporty-jet", name: "Sporty Jet", icon: Rocket },
-  { id: "aviator", name: "Aviator", icon: Plane },
-  { id: "sportykick", name: "SportyKick", icon: Goal },
-  { id: "sportyhero", name: "SportyHero", icon: Zap },
-  { id: "super-hero", name: "Super Hero", icon: Sparkles },
-  { id: "test-flight", name: "Test Flight", icon: FlaskConical },
-];
+// Aviator is the only crash engine (owner order 2026-11-20).
+const GAME_NAV = [{ id: "aviator", name: "Aviator", icon: Plane }];
 
 // pass-only predictors — their own group, apart from the main games
 const EXTRA_NAV = [
@@ -42,8 +31,7 @@ const EXTRA_NAV = [
 const ALL_GAMES = [...GAME_NAV, ...EXTRA_NAV];
 
 const TOOL_NAV = [
-  { to: "/scan", name: "Slip Scan", icon: ScanSearch },
-  { to: "/virtuals", name: "Instant Virtuals", icon: Trophy },
+  { to: "/scan", name: "Instant Virtuals", icon: ScanSearch },
   { to: "/predictor/simulate", name: "Simulation Lab", icon: FlaskConical },
   { to: "/predictor/history", name: "Prediction History", icon: History },
   { to: "/predictor/settings", name: "Settings", icon: Settings },
@@ -94,7 +82,7 @@ function PredictorLayout() {
 
   // Immersive pages: no rail, no top bar — the page owns the screen.
   // (video game pages + the casino-style games lobby)
-  const VIDEO_GAMES = ["aviator", "sporty-jet", "sportyhero"];
+  const VIDEO_GAMES = ["aviator"];
   const isImmersive = VIDEO_GAMES.some((id) => isGameActive(id)) || isOverview;
   if (isImmersive) {
     return (

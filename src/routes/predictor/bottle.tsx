@@ -69,7 +69,7 @@ function BottlePage() {
         </div>
         <span className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success/10 px-3 py-1.5 text-[11px] font-bold text-success">
           <MaterialIcon name="account_balance_wallet" className="text-[14px]" />
-          {me?.credits?.balance ?? 0} credits · 5 per spin
+          {me?.credits?.balance ?? 0} credits · 4 per spin
         </span>
       </div>
 

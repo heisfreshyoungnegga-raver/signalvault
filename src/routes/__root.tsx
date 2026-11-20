@@ -88,7 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "SignalVault — bold AI calls and slip scans, made in Ghana. Four tiers from GH₵250 for 20 credits to GH₵1,000 for 80 — full access to every game engine and AI slip scan, 5 credits per play. Pay by Mobile Money or bank transfer.",
+          "SignalVault — bold AI calls and slip scans, made in Ghana. Four tiers from GH₵250 for 4 credits to GH₵1,000 for 20 credits — full access to Aviator and AI slip scan, 4 credits per play. Pay by Mobile Money or bank transfer.",
       },
       { name: "author", content: "SignalVault" },
       { property: "og:type", content: "website" },
@@ -252,10 +252,8 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const location = useLocation();
   // Immersive video pages own the whole screen — no site chrome.
-  const isImmersive =
-    location.pathname === "/predictor/aviator" ||
-    location.pathname === "/predictor/sporty-jet" ||
-    location.pathname === "/predictor/sportyhero";
+  // Aviator is the only immersive video page (owner order 2026-11-20).
+  const isImmersive = location.pathname === "/predictor/aviator";
 
   return (
     <QueryClientProvider client={queryClient}>
