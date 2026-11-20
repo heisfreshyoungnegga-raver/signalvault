@@ -1,0 +1,16 @@
+node_modules/
+.output/
+.dist/
+dist/
+*.log
+.env
+.env.*
+!.env.example
+.env.local
+.vercel/
+previews/
+hero-options/
+shots.mjs
+hero-shot.mjs
+gateway.mjs
+.DS_Store

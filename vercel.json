@@ -1,0 +1,1 @@
+{"$schema":"https://openapi.vercel.sh/vercel.json","buildCommand":"npm run build","crons":[{"path":"/api/cron/reconcile","schedule":"*/5 * * * *"}],"framework":"tanstack-start","functions":{"api/index.js":{"maxDuration":300}},"installCommand":"npm install","outputDirectory":".output/public","rewrites":[{"destination":"/api/index.js","source":"/api/:path*"}]}

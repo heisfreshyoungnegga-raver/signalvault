@@ -1,0 +1,509 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+@import "./fonts.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * SignalVault design system — warm paper cream, kente terracotta + indigo.
+ * Market-day brightness, not a midnight terminal. Light only: there is no
+ * dark mode and no near-black page background anywhere in this app.
+ * Palette lock: warm paper cream base, ONE brand accent (kente terracotta),
+ * indigo used sparingly, teal for success / live states only.
+ * All colors are tokens. Never hardcode colors in components.
+ */
+
+@theme inline {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-logo: "Fraunces", ui-serif, Georgia, serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 6px);
+  --radius-2xl: calc(var(--radius) + 12px);
+  --radius-3xl: calc(var(--radius) + 20px);
+  --radius-4xl: calc(var(--radius) + 28px);
+
+  --color-background: var(--background);
+  --color-background-alt: var(--background-alt);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-surface: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-deep: var(--primary-deep);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-soft: var(--secondary-soft);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-rise: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-shimmer: shimmer 2.4s linear infinite;
+  --animate-pulse-ring: pulse-ring 2.2s ease-out infinite;
+  --animate-success-pop: success-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+:root {
+  --radius: 0.75rem;
+
+  /* Warm paper cream — the whole app lives in the light now */
+  --background: #fbf6ec;
+  --background-alt: #f5edda;
+  --foreground: #1c1917;
+
+  --card: #ffffff;
+  --card-foreground: #1c1917;
+  --popover: #fffdf6;
+  --popover-foreground: #1c1917;
+
+  /* Kente terracotta — the one brand accent */
+  --primary: #e14d2a;
+  --primary-deep: #b93a1d;
+  --primary-soft: #fbe9e2;
+  --primary-foreground: #ffffff;
+
+  /* Kente indigo — second colour, used sparingly */
+  --secondary: #2e3a8c;
+  --secondary-soft: #e7e9f7;
+  --secondary-foreground: #ffffff;
+
+  --muted: #f5edda;
+  --muted-foreground: #6b6257;
+
+  --accent: #fbe9e2;
+  --accent-foreground: #b93a1d;
+
+  --destructive: #c62828;
+  --destructive-foreground: #ffffff;
+  --success: #0f766e;
+  --success-foreground: #ffffff;
+  --warning: #b45309;
+  --warning-foreground: #92400e;
+
+  --border: #e8dfce;
+  --border-strong: #d8cbb2;
+  --input: #d8cbb2;
+  --ring: #e14d2a;
+
+  --chart-1: #e14d2a;
+  --chart-2: #2e3a8c;
+  --chart-3: #0f766e;
+  --chart-4: #b45309;
+  --chart-5: #8c6d2f;
+
+  --sidebar: #fffdf6;
+  --sidebar-foreground: #1c1917;
+  --sidebar-primary: #e14d2a;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fbe9e2;
+  --sidebar-accent-foreground: #b93a1d;
+  --sidebar-border: #e8dfce;
+  --sidebar-ring: #e14d2a;
+
+  --gradient-hero: linear-gradient(140deg, #e14d2a 0%, #c23f1f 55%, #a83218 100%);
+  --gradient-brand: linear-gradient(100deg, #b93a1d 0%, #e14d2a 100%);
+  --gradient-soft: linear-gradient(160deg, #fbf6ec 0%, #f5edda 100%);
+
+  --shadow-soft: 0 1px 2px rgba(28, 25, 23, 0.06), 0 10px 28px -12px rgba(28, 25, 23, 0.18);
+  --shadow-lift: 0 2px 4px rgba(28, 25, 23, 0.06), 0 22px 48px -16px rgba(225, 77, 42, 0.28);
+  --shadow-glow: none;
+}
+
+/* Light-only app: .dark mirrors :root so nothing can flip dark. */
+.dark {
+  --background: #fbf6ec;
+  --background-alt: #f5edda;
+  --foreground: #1c1917;
+  --card: #ffffff;
+  --card-foreground: #1c1917;
+  --popover: #fffdf6;
+  --popover-foreground: #1c1917;
+  --primary: #e14d2a;
+  --primary-deep: #b93a1d;
+  --primary-soft: #fbe9e2;
+  --primary-foreground: #ffffff;
+  --secondary: #2e3a8c;
+  --secondary-soft: #e7e9f7;
+  --secondary-foreground: #ffffff;
+  --muted: #f5edda;
+  --muted-foreground: #6b6257;
+  --accent: #fbe9e2;
+  --accent-foreground: #b93a1d;
+  --destructive: #c62828;
+  --destructive-foreground: #ffffff;
+  --success: #0f766e;
+  --success-foreground: #ffffff;
+  --warning: #b45309;
+  --warning-foreground: #92400e;
+  --border: #e8dfce;
+  --border-strong: #d8cbb2;
+  --input: #d8cbb2;
+  --ring: #e14d2a;
+  --sidebar: #fffdf6;
+  --sidebar-foreground: #1c1917;
+  --sidebar-primary: #e14d2a;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fbe9e2;
+  --sidebar-accent-foreground: #b93a1d;
+  --sidebar-border: #e8dfce;
+  --sidebar-ring: #e14d2a;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* payment success check: circle pops in, checkmark draws itself */
+@keyframes success-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.success-pop {
+  animation: var(--animate-success-pop);
+}
+.success-check-path {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: success-draw 0.45s 0.25s ease-out forwards;
+}
+@keyframes success-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(225, 77, 42, 0.35);
+  }
+  70% {
+    box-shadow: 0 0 0 18px rgba(225, 77, 42, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(225, 77, 42, 0);
+  }
+}
+
+@utility gradient-hero {
+  background-image: var(--gradient-hero);
+}
+
+@utility gradient-brand {
+  background-image: var(--gradient-brand);
+}
+
+@utility gradient-soft {
+  background-image: var(--gradient-soft);
+}
+
+@utility text-gradient {
+  background-image: var(--gradient-brand);
+  background-clip: text;
+  color: transparent;
+}
+
+@utility shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+@utility shadow-lift {
+  box-shadow: var(--shadow-lift);
+}
+
+@utility shadow-glow {
+  box-shadow: var(--shadow-glow);
+}
+
+@utility card-surface {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-soft);
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@utility card-hover {
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+  }
+}
+
+@utility glass-panel {
+  background-color: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(14px);
+  border-radius: var(--radius-2xl);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: clip;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+
+/* ============ SIGNALVAULT — the one recurring motif: the kente strip ============ */
+/* 6px woven bar: terracotta / indigo / cream / teal repeating blocks. */
+@utility kente-strip {
+  background-image: repeating-linear-gradient(
+    90deg,
+    #e14d2a 0 18px,
+    #2e3a8c 18px 36px,
+    #fbf6ec 36px 48px,
+    #0f766e 48px 60px,
+    #e14d2a 60px 78px
+  );
+}
+
+/* Perforated ticket edge — notches punched out of a card's left edge. */
+@utility ticket-edge {
+  --ticket-notch: radial-gradient(circle at left center, transparent 7px, var(--color-card) 7.5px);
+  background-image: var(--ticket-notch);
+  background-size: 16px 16px;
+  background-repeat: repeat-y;
+}
+
+/* Weave progress — kente segments that fill as a staged scan runs. */
+@utility weave-progress {
+  background-image: repeating-linear-gradient(
+    90deg,
+    #e14d2a 0 24px,
+    #2e3a8c 24px 48px,
+    #0f766e 48px 66px,
+    #f5edda 66px 84px
+  );
+}
+
+/* Win flash — a warm terracotta wash on a Mines reveal / Bottle hit. */
+@keyframes dw-win-flash {
+  0% { opacity: 0; }
+  18% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.dw-win-flash {
+  background: radial-gradient(ellipse at center, rgba(225, 77, 42, 0.22), transparent 70%);
+  animation: dw-win-flash 0.7s ease-out both;
+}
+
+/* ============ Legacy dw-* names, new definitions (names kept, looks changed) ============ */
+@keyframes dw-float3d {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes dw-spin-slow { to { transform: rotate(360deg); } }
+@keyframes dw-pulse-dot {
+  0% { box-shadow: 0 0 0 0 rgba(15, 118, 110, 0.45); }
+  70% { box-shadow: 0 0 0 12px rgba(15, 118, 110, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(15, 118, 110, 0); }
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+@utility dw-perspective { perspective: 1400px; }
+@utility dw-3d { transform-style: preserve-3d; }
+@utility dw-pop { transform: translateZ(48px); }
+/* No glow anywhere: flat terracotta text treatment. */
+@utility dw-glow-text {
+  color: var(--color-primary);
+  text-shadow: none;
+}
+/* Faint kente-weave grid in sand. */
+@utility dw-grid-bg {
+  background-image:
+    linear-gradient(rgba(140, 109, 47, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(140, 109, 47, 0.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+/* Flat lift + terracotta ring on hover — no 3D tilt. */
+@utility dw-card-3d {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+  }
+}
+/* Cream veil over a photo — the hero no longer uses a photo. */
+.dw-hero-shade {
+  background: linear-gradient(180deg, rgba(251, 246, 236, 0.35) 0%, transparent 30%, transparent 70%, #fbf6ec 100%);
+}
+.dw-live-dot { animation: dw-pulse-dot 2s ease-out infinite; }
+.dw-float3d { animation: dw-float3d 8s ease-in-out infinite; }
+
+@layer base {
+  body {
+    background-image:
+      radial-gradient(70% 50% at 80% -10%, rgba(225, 77, 42, 0.05) 0%, transparent 60%),
+      radial-gradient(60% 45% at -10% 100%, rgba(46, 58, 140, 0.05) 0%, transparent 60%);
+    background-attachment: fixed;
+  }
+  ::selection { background: #e14d2a; color: #ffffff; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dw-float3d { animation: none !important; }
+  .dw-card-3d:hover { transform: none; }
+}
+
+/* Terracotta panels sit on white text — buttons inside keep white text. */
+.gradient-hero { color: #fffdf6; --primary-foreground: #ffffff; }
+.gradient-hero .text-primary-foreground { color: #fffdf6; }
+.gradient-hero :is(a, button).bg-primary { color: #ffffff; }
+.gradient-hero .text-primary-foreground\/80 { color: rgba(255, 253, 246, 0.85); }
+.gradient-hero .text-primary-foreground\/75 { color: rgba(255, 253, 246, 0.8); }
+.gradient-hero .text-primary-foreground\/85 { color: rgba(255, 253, 246, 0.88); }
+
+/* Material Symbols class — defined locally so icons render on EVERY browser.
+   (Google's css2 only ships this class to some user agents; without it the
+   ligature names show as raw text, e.g. "casino casino" in the header.) */
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "liga";
+}
+
+/* Fixed-box icon for small badge pills (icon beside a text-xs label). The
+   icon font's base rule in fonts.css is unlayered 24px, which Tailwind
+   text-size utilities cannot override — badge icons pin the glyph here
+   instead: a fixed 16px box matched to the label, reserved loaded or not. */
+.mi-badge {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+/* Floating Telegram support button (mounted in __root.tsx, every page).
+   One calm entrance on mount, then it sits still — no perpetual
+   motion. Switches off for reduced-motion users. */
+@keyframes support-float-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.support-float {
+  animation: support-float-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .support-float {
+    animation: none;
+  }
+}
